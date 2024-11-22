@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {Teacher} from '../Models/teacher.model';
-import {User} from '../Models/user.model';
-import {TeachersService} from '../services/teacher/teachers.service';
+import {Teacher} from '../../models/teacher.model';
+import {User} from '../../models/user.model';
+import {TeachersService} from '../../services/teacher/teachers.service';
 import { CommonModule } from '@angular/common';
-import {UsersService} from '../services/users/users.service'; //import za ngFor
+import {UsersService} from '../../services/users/users.service';
 
 @Component({
   selector: 'app-home',
@@ -24,14 +24,14 @@ export class HomeComponent implements OnInit {
       this.teachers = teachers;
     });
 
-    this.userService.getUser('ivan.cicka.ic@gmail.com').subscribe((response) => {
-      if(response.success){
-        console.log("User Found ",response.data);
-        this.user = response.data;
-      }else {
-        console.log("User Not Found");
-        this.user = null;
-      }
-    });
+    // this.userService.getUser('ivan.cicka.ic@gmail.com',"seriko69").subscribe((response) => {
+    //   if(response.success){
+    //     console.log("User Found ",response.data);
+    //     this.user = response.data;
+    //   }else {
+    //     console.log("User Not Found");
+    //     this.user = null;
+    //   }
+    // });
   }
 }
