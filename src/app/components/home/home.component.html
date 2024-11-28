@@ -1,8 +1,52 @@
-<div>
-  <div *ngFor="let teacher of teachers; let i = index;" class = "mb-2">
-    <h2> {{ teacher.firstName}}</h2>
-    <p>{{ teacher.lastName}}</p>
-  </div>
+<div class="page-container">
+  <div class="section">
+    <div class="table-container">
 
-<!--  <h2>{{  user?.email }}</h2>-->
+      <!-- search -->
+      <div style="margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between;">
+        <mat-form-field style="width: 30vh; margin: 0;" appearance="outline" class="search-field">
+          <mat-label>Search</mat-label>
+          <input matInput (keyup)="applyFilter($event)" placeholder="Enter search term">
+        </mat-form-field>
+
+        <!-- buttons on the top -->
+        <div style="text-align: center; display: flex; gap: 10px; flex-grow: 1; justify-content: center;">
+          <button mat-raised-button
+                  [disabled]="isDistributionButtonDisabled"
+                  [style.background-color]="isDistributionButtonDisabled ? '#d6d6d6' : '#4caf50'"
+                  [style.color]="isDistributionButtonDisabled ? '#9e9e9e' : 'white'"
+                  style="padding: 10px 20px;">
+            Raspodela
+          </button>
+        </div>
+        <div style="text-align: center; display: flex; gap: 10px;">
+          <button mat-raised-button color="primary" (click)="showTeachers()"
+                  style="background-color: #007bff; color: white; padding: 10px 20px;">
+            Prikaži Nastavnike
+          </button>
+          <button mat-raised-button color="accent" (click)="showSubjects()"
+                  style="background-color: #6c757d; color: white; padding: 10px 20px;">
+            Prikaži Predmete
+          </button>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 compact-table">
+
+        <!-- Dinamic columns  -->
+        <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
+          <th mat-header-cell *matHeaderCellDef> {{ column | titlecase }} </th>
+          <td mat-cell *matCellDef="let element"> {{ element[column] }} </td>
+        </ng-container>
+
+        <!-- Header & Rows -->
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="onRowClicked(row)"></tr>
+      </table>
+
+      <!-- Paginator -->
+      <mat-paginator [pageSize]="10" [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons></mat-paginator>
+    </div>
+  </div>
 </div>
