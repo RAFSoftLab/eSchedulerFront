@@ -36,7 +36,7 @@
 
         <!-- Dinamic columns  -->
         <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
-          <th mat-header-cell *matHeaderCellDef> {{ column | titlecase }} </th>
+          <th mat-header-cell *matHeaderCellDef> {{ columnNamesMap[column] }} </th>
           <td mat-cell *matCellDef="let element"> {{ element[column] }} </td>
         </ng-container>
 
@@ -44,6 +44,33 @@
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="onRowClicked(row)"></tr>
       </table>
+
+      <div *ngIf="!isDistributionButtonDisabled && summaryRows == 2" class="custom-summary-rows">
+        <div class="summary-row">
+          <span class="label">Ukupno termina predavanja:</span>
+          <span class="value">{{ totalLectures }}</span>
+          <span class="label">Ukupno termina vežbi:</span>
+          <span class="value">{{ totalExercises }}</span>
+        </div>
+      </div>
+      <div *ngIf="!isDistributionButtonDisabled && summaryRows == 1" class="custom-summary-rows">
+        <div class="summary-row">
+          <span class="label">Nedeljno časova neparni (P)</span>
+          <span class="value">{{ weeklyLecturesO }}</span>
+          <span class="label">Nedeljno časova parni (P)</span>
+          <span class="value">{{ weeklyLecturesE }}</span>
+          <span class="label">Ukupan fond (P)</span>
+          <span class="value">{{ totalLectures }}</span>
+        </div>
+        <div class="summary-row">
+          <span class="label">Nedeljno časova neparni (V)</span>
+          <span class="value">{{ weeklyExercisesO }}</span>
+          <span class="label">Nedeljno časova parni (V)</span>
+          <span class="value">{{ weeklyExercisesE }}</span>
+          <span class="label">Ukupan fond (V)</span>
+          <span class="value">{{ totalExercises }}</span>
+        </div>
+      </div>
 
       <!-- Paginator -->
       <mat-paginator [pageSize]="10" [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons></mat-paginator>
