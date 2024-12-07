@@ -13,5 +13,15 @@ export class TeachersService {
   getTeachers(): Observable<Teacher[]>{
     return this.httpClient.get<Teacher[]>('http://localhost:8080/api/teachers');
   }
+  saveTeacher(teacher: Teacher): Observable<Teacher>{
+    return this.httpClient.post<Teacher>('http://localhost:8080/api/teachers',teacher);
+  }
+  updateTeacher(teacher: Teacher): Observable<Teacher>{
+    return this.httpClient.put<Teacher>('http://localhost:8080/api/teachers',teacher);
+  }
+
+  deleteTeacher(teacherId: number): Observable<Teacher>{
+    return this.httpClient.delete<Teacher>(`http://localhost:8080/api/teachers/${teacherId}`);
+  }
 
 }

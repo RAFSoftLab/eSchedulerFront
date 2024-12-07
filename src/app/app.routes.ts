@@ -1,8 +1,17 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './components/login/login.component';
-import { HomeComponent } from './components/home/home.component';
+import { HomeComponent } from './components/Administration/home/home.component';
+import {TeacherComponent} from './components/Administration/teacher/teacher.component';
+import {SubjectComponent} from './components/Administration/subject/subject.component';
+import {DistributionComponent} from './components/Administration/distribution/distribution.component';
+import {LayoutComponent} from './components/Administration/layout/layout.component';
 
 export const routes: Routes = [
-  { path: '', component: HomeComponent },
+  {path: '', component: LayoutComponent, children: [
+    {path: 'teachers', component: TeacherComponent},
+    {path: 'subjects', component: SubjectComponent},
+    {path: 'distribution', component: DistributionComponent},
+    { path: '', component: HomeComponent }
+  ]},
   { path: 'login', component: LoginComponent },
 ];

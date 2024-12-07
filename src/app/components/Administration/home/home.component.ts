@@ -1,7 +1,7 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {Teacher} from '../../models/teacher.model';
-import {Subject} from '../../models/subject.model';
-import {TeachersService} from '../../services/teacher/teachers.service';
+import {Teacher} from '../../../models/teacher.model';
+import {Subject} from '../../../models/subject.model';
+import {TeachersService} from '../../../services/teacher/teachers.service';
 import {CommonModule, NgIf} from '@angular/common';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
@@ -9,9 +9,9 @@ import {MatSortModule} from '@angular/material/sort';
 import {MatButtonModule} from '@angular/material/button';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import { MatInputModule} from '@angular/material/input';
-import {SubjectService} from '../../services/subject/subject.service';
-import {DistributionService} from '../../services/distribution/distribution.service';
-import {Distribution} from '../../models/distribution.model';
+import {SubjectService} from '../../../services/subject/subject.service';
+import {DistributionService} from '../../../services/distribution/distribution.service';
+import {Distribution} from '../../../models/distribution.model';
 
 
 @Component({
