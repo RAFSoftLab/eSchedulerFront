@@ -39,21 +39,12 @@
                   <label for="lastName" class="form-label">Prezime</label>
                   <input type="text" id="lastName" class="form-control" formControlName="lastName">
                 </div>
-                <label>
-                  <input type="checkbox" (change)="changeVisibility()">
-                  Prikaži Titule
+                <label for="titleSelect" class="form-label">
+                  Titula
                 </label>
-                <div *ngIf="!useDropdown; else dropdownTemplate">
-                  <input formControlName="title" placeholder="Unesite tekst">
-                </div>
-
-                <ng-template #dropdownTemplate>
-                  <select class="form-select" formControlName="title">
+                  <select id="titleSelect" class="form-select" formControlName="title">
                     <option *ngFor="let title of teacherTitles" [value]="title">{{ title }}</option>
                   </select>
-                </ng-template>
-
-
               </form>
             </div>
             <div class="modal-footer">

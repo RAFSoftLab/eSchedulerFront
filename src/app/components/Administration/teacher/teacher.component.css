@@ -1,7 +1,3 @@
-.table-container {
-  margin: 20px;
-}
-
 mat-paginator {
   margin-top: 20px;
 }
@@ -16,6 +12,7 @@ table tr:nth-child(even) {
 
 
 .table-container {
+  margin: 20px;
   border: 1px solid #ccc;
   border-radius: 8px;
   padding: 16px;
@@ -87,9 +84,6 @@ h2 {
   flex: 1;
   text-align: left;
   color: #333;
-}
-table{
-  cursor: pointer !important;
 }
 
 .value {

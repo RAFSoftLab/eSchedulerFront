@@ -15,4 +15,16 @@ export class DistributionService {
     return this.httpClient.get<Distribution[]>('http://localhost:8080/api/distributions');
   }
 
+  updateDistribution(distribution: Distribution): Observable<Distribution>{
+    return this.httpClient.put<Distribution>('http://localhost:8080/api/distributions', distribution);
+  }
+
+  saveDistribution(distribution: Distribution): Observable<Distribution>{
+    return this.httpClient.post<Distribution>('http://localhost:8080/api/distributions', distribution);
+  }
+
+  deleteDistribution(id: number): Observable<any>{
+    return this.httpClient.delete('http://localhost:8080/api/distributions/' + id);
+  }
+
 }

@@ -1,1 +1,162 @@
-<p>distribution works!</p>
+<div class="page-container">
+  <div class="section">
+    <div class="table-container">
+
+      <!-- search -->
+      <div style="margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between;">
+        <mat-form-field style="width: 30vh; margin: 0;" appearance="outline" class="search-field">
+          <mat-label>Search</mat-label>
+          <input matInput (keyup)="applyFilter($event)" placeholder="Enter search term">
+        </mat-form-field>
+
+        <!-- Toggle Buttons -->
+        <div style="display: flex; gap: 20px; justify-content: center; align-items: center;">
+          <span class="toggle-text" [class.active]="activeOption === 'first'" (click)="setFirstActive()">
+            Raspodeljeno
+          </span>
+          <span class="toggle-text" [class.active]="activeOption === 'second'" (click)="setSecondActive()">
+            Za raspodelu
+          </span>
+        </div>
+      </div>
+
+      <!-- Modal -->
+      <div class="modal fade" id="distributionModal" tabindex="-1" aria-labelledby="editDistributionModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="editDistributionModalLabel">Izmeni Raspodelu</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form [formGroup]="distributionForm">
+                <div class="mb-3">
+                  <label class="form-label">{{ columnNamesMap['teacher'] }}</label>
+                  <ng-select
+                    class="custom-ng-select highlighted"
+                    [items]="teachers"
+                    bindLabel="fullName"
+                    [placeholder]="distributionForm.get('teacher')?.value ? '' : 'Izaberite učitelja'"
+                    formControlName="teacher"
+                    [searchable]="true">
+                  </ng-select>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">{{ columnNamesMap['subject'] }}</label>
+                  <ng-container *ngIf="activeOption === 'first'; else subjectField">
+                    <ng-select
+                      class="custom-ng-select highlighted"
+                      [items]="subjects"
+                      bindLabel="name"
+                      formControlName="subject"
+                      [placeholder]="distributionForm.get('subject')?.value ? '' : 'Izaberite predmet'"
+                      (change)="onSubjectChange($event)">
+                      [searchable]="true">
+                    </ng-select>
+                  </ng-container>
+                  <ng-template #subjectField>
+                    <input type="text" class="form-control" [readonly]="true" formControlName="subject">
+                  </ng-template>
+                </div>
+                <div class="mb-3">
+                  <label for="studyProgram" class="form-label">{{ columnNamesMap['studyProgram'] }}</label>
+                  <input type="text" id="studyProgram" class="form-control" [readonly]="true" formControlName="studyProgram">
+                </div>
+                <div class="mb-3">
+                  <label for="semester" class="form-label">{{ columnNamesMap['semester'] }}</label>
+                  <input type="number" id="semester" class="form-control" [readonly]="true" formControlName="semester">
+                </div>
+                <div class="mb-3">
+                  <label for="countHours" class="form-label">{{ columnNamesMap['countHours'] }}</label>
+                  <input type="number" id="countHours" class="form-control" [readonly]="true" formControlName="countHours">
+                </div>
+                <div class="mb-3">
+                  <label for="sessionCount" class="form-label">{{ columnNamesMap['sessionCount']}}</label>
+                  <input type="number" id="sessionCount" class="form-control" formControlName="sessionCount">
+                </div>
+                <div class="mb-3">
+                  <ng-container *ngIf="activeOption === 'first';else classTypeField">
+                    <label for="classType" class="form-label">{{ columnNamesMap['classType']}}</label>
+                    <select id="classType" class="form-select" formControlName="classType">
+                      <option *ngFor="let type of classTypes" [value]="type">{{ type }}</option>
+                    </select>
+                  </ng-container>
+                  <ng-template #classTypeField>
+                    <label for="classTypeF" class="form-label">{{ columnNamesMap['classType']}}</label>
+                    <input type="text" id="classTypeF" class="form-control" [readonly]="true" formControlName="classType">
+                  </ng-template>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zatvori</button>
+              <button type="button" class="btn btn-primary" (click)="submitDistribution()">Sačuvaj</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+<!--           Confirm Delete Modal -->
+      <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="confirmDeleteModalLabel">Potvrda brisanja</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              Da li ste sigurni da želite da obrišete rapodelu za  <strong>{{distributionSubject}}</strong>?
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Otkaži</button>
+              <button type="button" class="btn btn-danger" (click)="deleteDistribution()">Potvrdi</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 compact-table">
+
+        <!-- Dinamic columns  -->
+        <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
+          <th mat-header-cell *matHeaderCellDef [class.text-center]="column ==='actions'"> {{ columnNamesMap[column] }} </th>
+          <td mat-cell *matCellDef="let element" [class.text-center]="column === 'actions'">
+            <ng-container *ngIf="column === 'actions'; else dataCell">
+              <ng-container *ngIf="activeOption === 'first';else addOption">
+                <button class="btn btn-icon" title="Izmeni" (click) ="editDistribution(element)">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
+                    <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z"/>
+                  </svg>
+                </button>
+                <button class="btn btn-icon text-danger ms-2" title = "Izbriši" (click) ="openDeleteModal(element)" >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                    <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                  </svg>
+                </button>
+              </ng-container>
+              <ng-template #addOption>
+                <button class="btn btn-icon text-bg-light ms-2" (click)="openAddDistributionModal(element)" title="Napravi raspodelu">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+                  </svg>
+                </button>
+              </ng-template>
+            </ng-container>
+            <ng-template #dataCell>{{ element[column] }}</ng-template>
+          </td>
+        </ng-container>
+
+        <!-- Header & Rows -->
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+
+      <!-- Paginator -->
+      <mat-paginator [pageSize]="10" [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons></mat-paginator>
+    </div>
+  </div>
+</div>

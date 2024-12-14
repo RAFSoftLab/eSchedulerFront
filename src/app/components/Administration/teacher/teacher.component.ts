@@ -30,7 +30,6 @@ export class TeacherComponent implements OnInit,AfterViewInit{
   teacherId: number = 0;
   teacherName: string = '';
   teacherTitles: Array<string> = [];
-  useDropdown: boolean = false;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
@@ -97,13 +96,13 @@ export class TeacherComponent implements OnInit,AfterViewInit{
         this.teachers = this.teachers.filter(teacher => teacher.id !== this.teacherId);
         this.dataSource.data = this.teachers;
         Modal.getInstance(document.getElementById('confirmDeleteModal')!)?.hide();
-        this.snackBar.open('Uspesno ste obrisali korisnika!', 'Zatvori', {
+        this.snackBar.open('Uspešno ste obrisali korisnika!', 'Zatvori', {
           duration: 5000,
           panelClass: ['success-snackbar']
         });
       },
       (error) => {
-        this.snackBar.open(`Niste uspeli da obrisete korisnika. Error: ${error.message}`, 'Zatvori', {
+        this.snackBar.open(`Niste uspeli da obrišete korisnika. Error: ${error.error.message}`, 'Zatvori', {
           duration: 8000,
           panelClass: ['error-snackbar']
         });
@@ -117,19 +116,19 @@ export class TeacherComponent implements OnInit,AfterViewInit{
       if(this.teacherForm.valid) {
         const teacher = this.teacherForm.value;
         this.teacherService.saveTeacher(teacher).subscribe(
-          () => {
+          (savedTeacher) => {
             Modal.getInstance(document.getElementById('addTeacherModal')!)?.hide();
-            this.snackBar.open('Uspesno ste uneli korisnika!', 'Zatvori', {
+            this.snackBar.open('Uspešno ste uneli korisnika!', 'Zatvori', {
               duration: 5000,
               panelClass: ['success-snackbar']
             });
             // Update teacher in the table
-              this.teachers.unshift(teacher);
+              this.teachers.unshift(savedTeacher);
               this.dataSource.data = this.teachers;
 
           },
           (error)=> {
-            this.snackBar.open(`Niste uspeli da kreirate korisnika. Error: ${error.message}`, 'Zatvori', {
+            this.snackBar.open(`Niste uspeli da kreirate korisnika. Error: ${error.error.message}`, 'Zatvori', {
               duration: 8000,
               panelClass: ['error-snackbar']
             });
@@ -143,7 +142,7 @@ export class TeacherComponent implements OnInit,AfterViewInit{
         this.teacherService.updateTeacher(teacher).subscribe(
           () => {
             Modal.getInstance(document.getElementById('addTeacherModal')!)?.hide();
-            this.snackBar.open('Uspesno ste izmenili korisnika!', 'Zatvori', {
+            this.snackBar.open('Uspešno ste izmenili korisnika!', 'Zatvori', {
               duration: 5000,
               panelClass: ['success-snackbar']
             });
@@ -155,7 +154,7 @@ export class TeacherComponent implements OnInit,AfterViewInit{
             }
           },
           (error)=> {
-            this.snackBar.open(`Niste uspeli da izmenite korisnika. Error: ${error.message}`, 'Zatvori', {
+            this.snackBar.open(`Niste uspeli da izmenite korisnika. Error: ${error.error.message}`, 'Zatvori', {
               duration: 8000,
               panelClass: ['error-snackbar']
             });
@@ -183,7 +182,5 @@ export class TeacherComponent implements OnInit,AfterViewInit{
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
-  changeVisibility(){
-    this.useDropdown = !this.useDropdown;
-  }
+
 }

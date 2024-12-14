@@ -19,6 +19,8 @@ import {CommonModule} from '@angular/common';
 import {MatSortModule} from '@angular/material/sort';
 import {MatButtonModule} from '@angular/material/button';
 import {MatInputModule} from '@angular/material/input';
+import {SubjectService} from '../../../services/subject/subject.service';
+import {Subject} from '../../../models/subject.model';
 
 @Component({
   selector: 'app-subject',
@@ -30,138 +32,173 @@ import {MatInputModule} from '@angular/material/input';
 export class SubjectComponent implements OnInit,AfterViewInit{
   displayedColumns: string[] = [];
   dataSource: MatTableDataSource<any>;
-  teacherForm: FormGroup;
-  createNewTeacher: boolean = true;
-  teachers : Teacher[] = [];
-  teacherId: number = 0;
-  teacherName: string = '';
-  teacherTitles: Array<string> = [];
-  useDropdown: boolean = false;
+  subjectForm: FormGroup;
+  createNewSubject: boolean = true;
+  subjects : Subject[] = [];
+  subjectId: number = 0;
+  subjectName: string = '';
+  //for dropdown
+  studyPrograms: Array<string> = [];
+  useStudyProgramDropdown: boolean = false;
+  mandatory: Array<string> = [];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
 
   columnNamesMap: { [key: string]: string } = {
-    firstName: 'Ime',
-    lastName: 'Prezime',
-    title: 'Zvanje',
+    name: 'Ime',
+    studyProgram: 'Studijski program',
+    semester: 'Semestar',
+    lectureHours: 'Broj časova predavanja',
+    exerciseHours: 'Broj časova vežbi',
+    practicumHours: 'Broj časova praktikuma',
+    mandatory: 'Obavezni',
+    lectureSessions: 'Broj predavanja',
+    exerciseSessions: 'Broj vežbi',
     actions: 'Akcije'
   };
 
-  constructor(private teacherService: TeachersService,
+  constructor(private subjectService: SubjectService,
               private formBuilder: FormBuilder,
               private snackBar: MatSnackBar,
               private dialog: MatDialog) {
     this.dataSource = new MatTableDataSource<any>();
-    this.teacherForm = formBuilder.group({
-      firstName: ['',Validators.required],
-      lastName: ['',Validators.required],
-      title:['',Validators.required]
+    this.subjectForm = formBuilder.group({
+      name: ['',Validators.required],
+      studyProgram: ['',Validators.required],
+      semester: ['',Validators.required],
+      lectureHours: ['',Validators.required],
+      exerciseHours: ['',Validators.required],
+      practicumHours: [''],
+      mandatory: ['',Validators.required],
+      lectureSessions: ['',Validators.required],
+      exerciseSessions: ['',Validators.required]
     })
   }
 
-  openAddTeacherModal() {
-    this.createNewTeacher = true;
-    this.teacherForm.reset();
-    this.teacherTitles = Array.from(new Set(this.teachers.map(teacher => teacher.title)));
 
-    const modalElement = document.getElementById('addTeacherModal');
+  openAddSubjectModal() {
+    this.createNewSubject = true;
+    this.subjectForm.reset();
+    this.studyPrograms = Array.from(new Set(this.subjects.map(subject => subject.studyProgram))).sort((a, b) => a.length - b.length);;
+    this.mandatory = Array.from(new Set(this.subjects.map(subject => subject.mandatory)));
+
+    const modalElement = document.getElementById('addSubjectModal');
     if (modalElement) {
       const modal = new Modal(modalElement);
       modal.show();
     }
   }
-  editTeacher(teacher: any) {
-    this.teacherId = teacher.id;
-    this.createNewTeacher = false;
-    this.teacherTitles = Array.from(new Set(this.teachers.map(teacher => teacher.title)));
 
+  editSubject(subject: any) {
+    this.subjectId = subject.id;
+    this.createNewSubject = false;
+    this.studyPrograms = Array.from(new Set(this.subjects.map(subject => subject.studyProgram))).sort((a, b) => a.length - b.length);
+    this.mandatory = Array.from(new Set(this.subjects.map(subject => subject.mandatory)));
 
-    const modalElement = document.getElementById('addTeacherModal');
+    const modalElement = document.getElementById('addSubjectModal');
     if (modalElement) {
       const modal = new Modal(modalElement);
       modal.show();
 
-      this.teacherForm.setValue({
-        firstName: teacher.firstName,
-        lastName: teacher.lastName,
-        title: teacher.title,
+      this.subjectForm.setValue({
+        name: subject.name,
+        studyProgram: subject.studyProgram,
+        semester: subject.semester,
+        lectureHours: subject.lectureHours,
+        exerciseHours: subject.exerciseHours,
+        practicumHours: subject.practicumHours,
+        mandatory: subject.mandatory,
+        lectureSessions: subject.lectureSessions,
+        exerciseSessions: subject.exerciseSessions
       });
     }
   }
 
-  openDeleteModal(teacher: Teacher): void {
-    this.teacherId = teacher.id;
-    this.teacherName = teacher.firstName;
+  openDeleteModal(subject: Subject): void {
+    this.subjectId = subject.id;
+    this.subjectName = subject.name;
     const modal = new Modal(document.getElementById('confirmDeleteModal')!);
     modal.show();
   }
 
-  deleteTeacher() {
-    this.teacherService.deleteTeacher(this.teacherId).subscribe(
+  deleteSubject() {
+    this.subjectService.deleteSubject(this.subjectId).subscribe(
       () => {
-        this.teachers = this.teachers.filter(teacher => teacher.id !== this.teacherId);
-        this.dataSource.data = this.teachers;
+        this.subjects = this.subjects.filter(subject => subject.id !== this.subjectId);
+        this.dataSource.data = this.subjects;
         Modal.getInstance(document.getElementById('confirmDeleteModal')!)?.hide();
-        this.snackBar.open('Uspesno ste obrisali korisnika!', 'Zatvori', {
+        this.snackBar.open('Uspešno ste obrisali predmet!', 'Zatvori', {
           duration: 5000,
           panelClass: ['success-snackbar']
         });
       },
       (error) => {
-        this.snackBar.open(`Niste uspeli da obrisete korisnika. Error: ${error.message}`, 'Zatvori', {
+        this.snackBar.open(`Niste uspeli da obrišete predmet. Error: ${error.error.message}`, 'Zatvori', {
           duration: 8000,
           panelClass: ['error-snackbar']
         });
+        //Just to make sure that modal is on top
+        const overlayContainer = document.querySelector('.cdk-overlay-container');
+        if (overlayContainer) {
+          (overlayContainer as HTMLElement).style.zIndex = '1200';
+        }
       }
     );
   }
 
 
-  submitTeacher() {
-    if(this.createNewTeacher){
-      if(this.teacherForm.valid) {
-        const teacher = this.teacherForm.value;
-        this.teacherService.saveTeacher(teacher).subscribe(
-          () => {
-            Modal.getInstance(document.getElementById('addTeacherModal')!)?.hide();
-            this.snackBar.open('Uspesno ste uneli korisnika!', 'Zatvori', {
+  submitSubject() {
+    if(this.createNewSubject){
+      if(this.subjectForm.valid) {
+        const subject = this.subjectForm.value;
+        this.subjectService.saveSubject(subject).subscribe(
+          (savedSubject) => {
+            Modal.getInstance(document.getElementById('addSubjectModal')!)?.hide();
+            this.snackBar.open('Uspešno ste uneli novi predmet!', 'Zatvori', {
               duration: 5000,
               panelClass: ['success-snackbar']
             });
             // Update teacher in the table
-            this.teachers.unshift(teacher);
-            this.dataSource.data = this.teachers;
+            this.subjects.unshift(savedSubject);
+            this.dataSource.data = this.subjects;
 
           },
           (error)=> {
-            this.snackBar.open(`Niste uspeli da kreirate korisnika. Error: ${error.message}`, 'Zatvori', {
+            this.snackBar.open(`Niste uspeli da kreirate predmet. Error: ${error.error.message}`, 'Zatvori', {
               duration: 8000,
               panelClass: ['error-snackbar']
             });
+            //Just to make sure that modal is on top
+            const overlayContainer = document.querySelector('.cdk-overlay-container');
+            if (overlayContainer) {
+              (overlayContainer as HTMLElement).style.zIndex = '1200';
+            }
           }
         );
       }
     }else{
-      if(this.teacherForm.valid) {
-        const teacher = this.teacherForm.value;
-        teacher.id = this.teacherId;
-        this.teacherService.updateTeacher(teacher).subscribe(
+      console.log("ZISOV");
+      if(this.subjectForm.valid) {
+        console.log("ZISOV HLBOKO");
+        const subject = this.subjectForm.value;
+        subject.id = this.subjectId;
+        this.subjectService.updateSubject(subject).subscribe(
           () => {
-            Modal.getInstance(document.getElementById('addTeacherModal')!)?.hide();
-            this.snackBar.open('Uspesno ste izmenili korisnika!', 'Zatvori', {
+            Modal.getInstance(document.getElementById('addSubjectModal')!)?.hide();
+            this.snackBar.open('Uspešno ste izmenili predmet!', 'Zatvori', {
               duration: 5000,
               panelClass: ['success-snackbar']
             });
             // Update teacher in the table
-            const index = this.teachers.findIndex(tmp => tmp.id === this.teacherId);
+            const index = this.subjects.findIndex(tmp => tmp.id === this.subjectId);
             if (index !== -1) {
-              this.teachers[index] = teacher;
-              this.dataSource.data = this.teachers;
+              this.subjects[index] = subject;
+              this.dataSource.data = this.subjects;
             }
           },
           (error)=> {
-            this.snackBar.open(`Niste uspeli da izmenite korisnika. Error: ${error.message}`, 'Zatvori', {
+            this.snackBar.open(`Niste uspeli da izmenite predmet. Error: ${error.message}`, 'Zatvori', {
               duration: 8000,
               panelClass: ['error-snackbar']
             });
@@ -178,18 +215,20 @@ export class SubjectComponent implements OnInit,AfterViewInit{
   }
 
   ngOnInit(): void {
-    this.teacherService.getTeachers().subscribe((teachers) => {
-      this.teachers = teachers;
-      this.dataSource.data = this.teachers;
-    });
-    this.displayedColumns = ['firstName', 'lastName', 'title','actions'];
+    this.subjectService.getSubjects().subscribe(
+      (subjects) => {
+        this.subjects = subjects;
+        this.dataSource.data = this.subjects;
+      });
+    this.displayedColumns = ['name', 'studyProgram', 'semester','lectureHours','exerciseHours','practicumHours','mandatory','lectureSessions','exerciseSessions','actions'];
   }
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
-  changeVisibility(){
-    this.useDropdown = !this.useDropdown;
+  changeVisibilityStudyProgram(){
+    this.useStudyProgramDropdown = !this.useStudyProgramDropdown;
   }
+
 }

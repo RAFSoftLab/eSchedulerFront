@@ -1,59 +1,142 @@
-# ESchedulerFront
+# **eScheduler**
+Documentation for deploying and running the eScheduler application.
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.0.0.
+---
 
-## Development server
+## 📖 **Overview**
+eScheduler is an application for managing and scheduling classes. The platform features two primary user roles:
+- **Administrators** – Responsible for creating, managing, and updating the schedule.
+- **Professors** – Can view their personalized class schedules.
 
-To start a local development server, run:
+The application is designed to be:
+- **User-friendly** – Ensures smooth and intuitive user experience.
+- **Efficient** – Optimized to handle large datasets and quickly generate schedules.
+- **Customizable** – Easily adaptable to new features and changes in requirements.
 
+---
+
+## ⚙️ **Technologies Used**
+
+### 🔹 **Backend**
+- **Java 17**
+- **Spring Boot 3**
+- **Spring Data JPA**
+- **Spring Security** 
+- **Hibernate**
+- **MySQL (Database)**
+
+### 🔹 **Frontend**
+- **Angular 19**
+- **TypeScript**
+- **Standalone module architecture**
+
+### 🔹 **Development Tools**
+- **IntelliJ IDEA** (for both backend and frontend development)
+- **Postman** (for API testing)
+- **XAMPP** (for running MySQL and phpMyAdmin)
+
+---
+
+## 📋 **Requirements**
+To run the application locally, ensure the following dependencies are installed on your system:
+- **Java Development Kit (JDK) 17 or higher**
+- **Gradle (Groovy) Build Tool** (comes with Spring Boot Initializer)
+- **Node.js** (version: 22.11.0)
+- **XAMPP** (which includes MySQL and phpMyAdmin)
+
+---
+
+## 🚀 **Setup and Run Instructions**
+
+### 🔹 **1. Clone the Repositories**
+Clone the project repositories for both the backend and frontend to your local system:
 ```bash
-ng serve
+# Clone backend repository
+git clone https://github.com/RAFSoftLab/eSchedulerBackend.git eScheduler
+
+# Clone frontend repository
+git clone https://github.com/RAFSoftLab/eSchedulerFront.git eSchedulerFront
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+---
 
-## Code scaffolding
+## 🔹 **2. Configure the Database**
+1. **Create a MySQL database** named `raspodelanastave` using **phpMyAdmin** or the MySQL command line.
+2. **Update the database credentials** in the backend configuration file (`application.properties` or `application.yml`):
+    ```properties
+    spring.datasource.url=jdbc:mysql://localhost:3306/raspodelanastave
+    spring.datasource.username=your_username
+    spring.datasource.password=your_password
+    ```
+---
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## 🔹 **3. Run the Backend**
+1. **Navigate to the backend directory**:
+    ```bash
+    cd eScheduler/
+    ```
+2. **Build and run the backend application**:
+    ```bash
+    ./gradlew clean build
+    ./gradlew bootRun
+    ```
+3. **The backend server will start on**:
+   👉 **http://localhost:8080**
 
-```bash
-ng generate component component-name
-```
+---
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## 🔹 **4. Run the Frontend**
+1. **Navigate to the frontend directory**:
+    ```bash
+    cd eSchedulerFront/
+    ```
+2. **Install the frontend dependencies**:
+    ```bash
+    npm install
+    ```
+3. **Start the Angular application**:
+    ```bash
+    ng serve
+    ```
+4. **The frontend server will start on**:
+   👉 **http://localhost:4200**
 
-```bash
-ng generate --help
-```
+---
 
-## Building
+## 📚 **API Documentation**
+API documentation for the backend is automatically generated using **Swagger**.
+You can access it at:
+👉 **http://localhost:8080/swagger-ui.html**
 
-To build the project run:
+---
 
-```bash
-ng build
-```
+## 🛠️ **Troubleshooting**
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+### 🔹 **Database Connection Error**
+**Issue:** Unable to connect to the database.  
+**Solution:**
+- Verify that **XAMPP** is running, and MySQL is active.
+- Check if **phpMyAdmin** shows the `raspodelanastave` database.
+- Ensure the credentials in `application.properties` are correct.
 
-## Running unit tests
+---
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+### 🔹 **Frontend Build Error**
+**Issue:** Errors when running `ng serve`.  
+**Solution:**
+- Ensure **Node.js** and **npm** are installed.
+- Check the Node.js version with `node -v` and ensure compatibility.
+- Run `npm install` before starting the server.
 
-```bash
-ng test
-```
+---
 
-## Running end-to-end tests
+### 🔹 **Backend Startup Issues**
+**Issue:** Backend does not start.  
+**Solution:**
+- Check for missing dependencies.
+- Run:
+    ```bash
+    ./gradlew clean build
+    ```
+  to resolve issues related to dependencies or build errors.
 
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.

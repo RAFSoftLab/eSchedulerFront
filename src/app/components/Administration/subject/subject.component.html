@@ -10,59 +10,88 @@
         </mat-form-field>
 
         <div style="text-align: center; display: flex; gap: 10px;">
-          <button mat-raised-button color="accent" (click) ="openAddTeacherModal()"
+          <button mat-raised-button color="accent" (click) ="openAddSubjectModal()"
                   style="background-color: green; color: white; padding: 10px 20px;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-add" viewBox="0 0 16 16">
-              <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0m-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4"/>
-              <path d="M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z"/>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+              <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
             </svg>
-            Dodaj Profesora
+            Dodaj Predmet
           </button>
         </div>
       </div>
 
       <!-- Modal -->
-      <div class="modal fade" id="addTeacherModal" tabindex="-1" aria-labelledby="addTeacherModalLabel" aria-hidden="true">
+      <div class="modal fade" id="addSubjectModal" tabindex="-1" aria-labelledby="addSubjectModalLabel" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="addTeacherModalLabel">Dodaj Novog Profesora</h5>
+              <h5 class="modal-title" id="addSubjectModalLabel">Dodaj Novi Predmet</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-              <form [formGroup]="teacherForm">
+              <form [formGroup]="subjectForm">
                 <div class="mb-3">
-                  <label for="firstName" class="form-label">Ime</label>
-                  <input type="text" id="firstName" class="form-control" formControlName="firstName">
+                  <label for="name" class="form-label">{{ columnNamesMap['name'] }}</label>
+                  <input type="text" id="name" class="form-control" formControlName="name">
                 </div>
-                <div class="mb-3">
-                  <label for="lastName" class="form-label">Prezime</label>
-                  <input type="text" id="lastName" class="form-control" formControlName="lastName">
-                </div>
+<!--                checkbox for study program-->
                 <label>
-                  <input type="checkbox" (change)="changeVisibility()">
-                  Prikaži Titule
+                  <input type="checkbox" (change)="changeVisibilityStudyProgram()">
+                  Prikaži polje za unos novog studijskog programa
                 </label>
-                <div *ngIf="!useDropdown; else dropdownTemplate">
-                  <input formControlName="title" placeholder="Unesite tekst">
+                <div class="mb-3">
+                  <div *ngIf="useStudyProgramDropdown; else studyProgramTemplate">
+                    <input class="form-control styled-input" formControlName="studyProgram" placeholder="Unesite tekst">
+                  </div>
+                  <ng-template #studyProgramTemplate>
+                    <select class="form-select" formControlName="studyProgram">
+                      <option *ngFor="let studyProgram of studyPrograms" [value]="studyProgram">{{ studyProgram }}</option>
+                    </select>
+                  </ng-template>
                 </div>
-
-                <ng-template #dropdownTemplate>
-                  <select class="form-select" formControlName="title">
-                    <option *ngFor="let title of teacherTitles" [value]="title">{{ title }}</option>
+                <label for="mandatory">
+                  Obavezni
+                </label>
+                <div class="mb-3">
+                  <select id="mandatory" class="form-select" formControlName="mandatory">
+                    <option *ngFor="let tmp of mandatory" [value]="tmp">{{ tmp }}</option>
                   </select>
-                </ng-template>
-
-
+                </div>
+                <div class="mb-3">
+                  <label for="semester" class="form-label">{{ columnNamesMap['semester'] }}</label>
+                  <input type="number" id="semester" class="form-control" formControlName="semester">
+                </div>
+                <div class="mb-3">
+                  <label for="lectureHours" class="form-label">{{ columnNamesMap['lectureHours'] }}</label>
+                  <input type="number" id="lectureHours" class="form-control" formControlName="lectureHours">
+                </div>
+                <div class="mb-3">
+                  <label for="exerciseHours" class="form-label">{{ columnNamesMap['exerciseHours'] }}</label>
+                  <input type="number" id="exerciseHours" class="form-control" formControlName="exerciseHours">
+                </div>
+                <div class="mb-3">
+                  <label for="practicumHours" class="form-label">{{ columnNamesMap['practicumHours'] }}</label>
+                  <input type="number" id="practicumHours" class="form-control" formControlName="practicumHours">
+                </div>
+                <div class="mb-3">
+                  <label for="lectureSessions" class="form-label">{{ columnNamesMap['lectureSessions'] }}</label>
+                  <input type="number" id="lectureSessions" class="form-control" formControlName="lectureSessions">
+                </div>
+                <div class="mb-3">
+                  <label for="exerciseSessions" class="form-label">{{ columnNamesMap['exerciseSessions'] }}</label>
+                  <input type="number" id="exerciseSessions" class="form-control" formControlName="exerciseSessions">
+                </div>
               </form>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zatvori</button>
-              <button type="button" class="btn btn-primary" (click)="submitTeacher()">Sačuvaj</button>
+              <button type="button" class="btn btn-primary" (click)="submitSubject()">Sačuvaj</button>
             </div>
           </div>
         </div>
       </div>
+
 
       <!-- Confirm Delete Modal -->
       <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
@@ -73,11 +102,11 @@
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-              Da li ste sigurni da želite da obrišete učitelja <strong>{{teacherName}}</strong>?
+              Da li ste sigurni da želite da obrišete predmet <strong>{{subjectName}}</strong>?
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Otkaži</button>
-              <button type="button" class="btn btn-danger" (click)="deleteTeacher()">Potvrdi</button>
+              <button type="button" class="btn btn-danger" (click)="deleteSubject()">Potvrdi</button>
             </div>
           </div>
         </div>
@@ -91,7 +120,7 @@
           <th mat-header-cell *matHeaderCellDef [class.text-center]="column ==='actions'"> {{ columnNamesMap[column] }} </th>
           <td mat-cell *matCellDef="let element" [class.text-center]="column === 'actions'">
             <ng-container *ngIf="column === 'actions'; else dataCell">
-              <button class="btn btn-icon" title="Izmeni" (click) ="editTeacher(element)">
+              <button class="btn btn-icon" title="Izmeni" (click) ="editSubject(element)">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
                   <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z"/>
                 </svg>

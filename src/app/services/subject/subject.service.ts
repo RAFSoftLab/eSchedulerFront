@@ -15,5 +15,16 @@ export class SubjectService {
     return this.httpClient.get<Subject[]>('http://localhost:8080/api/subjects');
   }
 
+  saveSubject(subject: Subject): Observable<Subject>{
+    subject.id = 0;
+    return this.httpClient.post<Subject>('http://localhost:8080/api/subjects', subject);
+  }
 
+  updateSubject(subject: Subject): Observable<Subject>{
+    console.log("ZISOV");
+    return this.httpClient.put<Subject>('http://localhost:8080/api/subjects', subject);
+  }
+  deleteSubject(id: number): Observable<any>{
+    return this.httpClient.delete('http://localhost:8080/api/subjects/'+id);
+  }
 }

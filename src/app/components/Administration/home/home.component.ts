@@ -148,28 +148,26 @@ export class HomeComponent implements OnInit {
 
     if(row.hasOwnProperty('title')) {
       this.summaryRows = 1;
-      this.selectedDistributions = this.distributions.filter((distribution: { teacherId: any; }) => distribution.teacherId === row.id);
+      this.selectedDistributions = this.distributions.filter((distribution: { teacher: any; }) => distribution.teacher.id === row.id);
       this.displayedColumns = ['teacher','subject', 'studyProgram', 'semester', 'countHours','sessionCount' ,'classType'];
       this.dataSource.paginator = this.paginator;
     }else if (row.hasOwnProperty('name')){
       this.summaryRows = 2;
       this.displayedColumns = ['teacher','subject', 'studyProgram', 'semester', 'countHours','sessionCount' ,'classType'];
-      this.selectedDistributions = this.distributions.filter((distribution: { subjectId: any; }) => distribution.subjectId === row.id);
+      this.selectedDistributions = this.distributions.filter((distribution: { subject: any; }) => distribution.subject.id === row.id);
       this.dataSource.paginator = this.paginator;
     }
 
     // Mapping data
     this.dataSource.data = this.selectedDistributions.map((distribution) => {
-      const subject = this.subjects.find((subject) => subject.id === distribution.subjectId);
       return {
-        teacher: this.teachers.find((teacher) => teacher.id === distribution.teacherId)?.firstName + ' ' +
-          this.teachers.find((teacher) => teacher.id === distribution.teacherId)?.lastName,
-        studyProgram: subject?.studyProgram,
-        semester: subject?.semester,
+        teacher: distribution.teacher?.firstName + '' +distribution.teacher.lastName,
+        studyProgram: distribution.subject?.studyProgram,
+        semester: distribution.subject?.semester,
         countHours: distribution.classType === 'vezbe'
-          ? subject?.exerciseHours
-          : subject?.lectureHours,
-        subject: subject?.name,
+          ? distribution.subject?.exerciseHours
+          : distribution.subject?.lectureHours,
+        subject: distribution.subject?.name,
         classType: distribution.classType,
         sessionCount: distribution.sessionCount
       };
