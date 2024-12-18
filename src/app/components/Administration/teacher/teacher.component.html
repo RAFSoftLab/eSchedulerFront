@@ -45,6 +45,14 @@
                   <select id="titleSelect" class="form-select" formControlName="title">
                     <option *ngFor="let title of teacherTitles" [value]="title">{{ title }}</option>
                   </select>
+                <div class="mb-3">
+                  <label for="email" class="form-label">Email</label>
+                  <input type="email" id="email" class="form-control" formControlName="email">
+                </div>
+                <div class="form-check mb-3">
+                  <input type="checkbox" id="isAdmin" class="form-check-input" formControlName="isAdmin">
+                  <label for="isAdmin" class="form-check-label">Da li je administrator?</label>
+                </div>
               </form>
             </div>
             <div class="modal-footer">

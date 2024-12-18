@@ -12,6 +12,7 @@ import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} fr
 import {Modal, Tooltip} from 'bootstrap';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {MatDialog} from '@angular/material/dialog';
+import {User} from '../../../models/user.model';
 
 @Component({
   selector: 'app-teacher',
@@ -27,6 +28,7 @@ export class TeacherComponent implements OnInit,AfterViewInit{
   teacherForm: FormGroup;
   createNewTeacher: boolean = true;
   teachers : Teacher[] = [];
+  users: User[] = [];
   teacherId: number = 0;
   teacherName: string = '';
   teacherTitles: Array<string> = [];
@@ -38,6 +40,7 @@ export class TeacherComponent implements OnInit,AfterViewInit{
     firstName: 'Ime',
     lastName: 'Prezime',
     title: 'Zvanje',
+    email: 'Email',
     actions: 'Akcije'
   };
 
@@ -49,7 +52,9 @@ export class TeacherComponent implements OnInit,AfterViewInit{
     this.teacherForm = formBuilder.group({
       firstName: ['',Validators.required],
       lastName: ['',Validators.required],
-      title:['',Validators.required]
+      title:['',Validators.required],
+      email: ['',Validators.required],
+      isAdmin: [false,Validators.required],
     })
   }
 
@@ -63,22 +68,31 @@ export class TeacherComponent implements OnInit,AfterViewInit{
       const modal = new Modal(modalElement);
       modal.show();
     }
+
+    this.teacherForm.patchValue({
+      email: '@raf.rs',
+      isAdmin: false
+    });
   }
   editTeacher(teacher: any) {
     this.teacherId = teacher.id;
     this.createNewTeacher = false;
     this.teacherTitles = Array.from(new Set(this.teachers.map(teacher => teacher.title)));
 
-
     const modalElement = document.getElementById('addTeacherModal');
     if (modalElement) {
       const modal = new Modal(modalElement);
       modal.show();
 
+      //somethimes is admin and somethimes isAdmin dont know why !!!
+      const isAdmin = teacher.admin !== undefined ? teacher.admin : teacher.isAdmin;
+
       this.teacherForm.setValue({
         firstName: teacher.firstName,
         lastName: teacher.lastName,
         title: teacher.title,
+        email: teacher.email,
+        isAdmin: isAdmin,
       });
     }
   }
@@ -175,12 +189,27 @@ export class TeacherComponent implements OnInit,AfterViewInit{
       this.teachers = teachers;
       this.dataSource.data = this.teachers;
     });
-    this.displayedColumns = ['firstName', 'lastName', 'title','actions'];
+    this.displayedColumns = ['firstName', 'lastName', 'title','email','actions'];
+
+    this.teacherForm.get('firstName')?.valueChanges.subscribe(() => {
+      this.updateEmail();
+    });
+
+    this.teacherForm.get('lastName')?.valueChanges.subscribe(() => {
+      this.updateEmail();
+    });
   }
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
+
+  updateEmail(): void {
+    const firstName = this.teacherForm.get('firstName')?.value || '';
+    const lastName = this.teacherForm.get('lastName')?.value || '';
+    const email = `${firstName[0]?.toLowerCase() || ''}.${lastName?.toLowerCase() || ''}@raf.rs`;
+    this.teacherForm.patchValue({ email });
   }
 
 }
