@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {Teacher} from '../../../models/teacher.model';
 import {Subject} from '../../../models/subject.model';
 import {TeachersService} from '../../../services/teacher/teachers.service';
@@ -12,6 +12,7 @@ import { MatInputModule} from '@angular/material/input';
 import {SubjectService} from '../../../services/subject/subject.service';
 import {DistributionService} from '../../../services/distribution/distribution.service';
 import {Distribution} from '../../../models/distribution.model';
+import {TeacherSummary} from '../../../models/teacherSummary.model';
 
 
 @Component({
@@ -26,6 +27,7 @@ export class HomeComponent implements OnInit {
   displayedColumns: string[] = [];
   dataSource: MatTableDataSource<any>;
   isDistributionButtonDisabled: boolean = true;
+  teacherSummary: TeacherSummary[] = [];
 
   summaryRows = 1;
   totalLectures = 0;
@@ -60,7 +62,10 @@ export class HomeComponent implements OnInit {
     classType: 'Vrsta',
     sessionCount:'Broj termina',
     teacher: 'Nastavnik',
-    subject: 'Predmet'
+    subject: 'Predmet',
+    email : 'Email',
+    summaryLectureHours: 'Ukupno predavanja',
+    summaryExerciseHours: 'Ukupno vežbi',
   };
 
 
@@ -71,7 +76,16 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     this.teacherService.getTeachers().subscribe((teachers) => {
       this.teachers = teachers;
-      this.showTeachers();
+      this.teacherSummary = this.teachers.map((teachers)=>({
+        id: teachers.id,
+        email: teachers.email,
+        firstName: teachers.firstName,
+        lastName: teachers.lastName,
+        title: teachers.title,
+        summaryExerciseHours: 0,
+        summaryLectureHours: 0,
+      }));
+      // this.showTeachers();
     });
 
     this.subjectService.getSubjects().subscribe((subjects) => {
@@ -80,12 +94,27 @@ export class HomeComponent implements OnInit {
 
     this.distributionService.getDistributions().subscribe((distributions) => {
       this.distributions = distributions;
-    });
 
+      this.distributions.forEach((distribution) => {
+        const index = this.teacherSummary.findIndex(
+          (ts) => ts.id === distribution.teacher.id
+        );
+
+        if (index !== -1) {
+          if (distribution.classType === 'vezbe') {
+            this.teacherSummary[index].summaryExerciseHours += (distribution.subject.exerciseHours *13* distribution.sessionCount);
+          } else {
+            this.teacherSummary[index].summaryLectureHours += (distribution.subject.lectureHours *13* distribution.sessionCount);
+          }
+        }
+      });
+      this.showTeachers();
+    });
   }
+
   showTeachers(): void {
-    this.dataSource.data = this.teachers;
-    this.displayedColumns = ['firstName', 'lastName', 'title'];
+    this.dataSource.data = this.teacherSummary;
+    this.displayedColumns = ['firstName', 'lastName', 'email', 'title','summaryLectureHours','summaryExerciseHours'];
     this.dataSource.paginator = this.paginator;
     this.isDistributionButtonDisabled = true;
   }
@@ -180,4 +209,7 @@ export class HomeComponent implements OnInit {
     // activate distribution button
     this.isDistributionButtonDisabled = this.selectedDistributions.length === 0;
   }
+
+
+
 }
