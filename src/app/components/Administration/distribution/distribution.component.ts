@@ -52,6 +52,7 @@ export class DistributionComponent implements OnInit, AfterViewInit{
     leftSessionCount: 'Preostali termini',
     classType: 'Vrsta',
     actions: 'Akcije',
+    email: 'Email',
     //Secound Table
     name:'ime',
     mismatchType: 'vrsta',
@@ -87,8 +88,10 @@ export class DistributionComponent implements OnInit, AfterViewInit{
       modal.show();
     }
 
+    const fullTeacher = this.teachers.find(teacher => teacher.email === row.email);
     this.distributionForm.patchValue({
       subject: row.name,
+      fullTeacher: fullTeacher,
       studyProgram: row.studyProgram,
       semester: row.semester,
       countHours: row.countHours,
@@ -106,8 +109,9 @@ export class DistributionComponent implements OnInit, AfterViewInit{
       const modal = new Modal(modalElement);
       modal.show();
 
+      const fullTeacher = this.teachers.find(teacher => teacher.email === row.email);
       this.distributionForm.setValue({
-        teacher: row.teacher,
+        teacher: fullTeacher,
         subject: row.subject,
         studyProgram: row.studyProgram,
         semester: row.semester,
@@ -151,9 +155,9 @@ export class DistributionComponent implements OnInit, AfterViewInit{
     if(this.createNewDistribution){
       if(this.distributionForm.valid) {
         const distribution = this.distributionForm.value;
-        distribution.teacher = distribution.teacher.firstName + ' ' + distribution.teacher.lastName;
+        distribution.teacher = distribution.teacher.email;
         distribution.id =0;
-        console.log(distribution);
+        console.log(distribution.teacher);
         this.distributionService.saveDistribution(distribution).subscribe(
           (savedDistribution) => {
             Modal.getInstance(document.getElementById('distributionModal')!)?.hide();
@@ -162,11 +166,9 @@ export class DistributionComponent implements OnInit, AfterViewInit{
               panelClass: ['success-snackbar']
             });
             this.distributions.unshift(savedDistribution);
-            this.dataSource.data = this.mapDistributionsToDataSource(this.distributions);
-
+            this.dataSource.data = this.filterDistributions(this.distributions);
           },
           (error)=> {
-            console.log(error);
             this.snackBar.open(`Niste uspeli da kreirate raspodelu. Error: ${error.error.message}`, 'Zatvori', {
               duration: 8000,
               panelClass: ['error-snackbar']
@@ -182,8 +184,8 @@ export class DistributionComponent implements OnInit, AfterViewInit{
     }else{
       if(this.distributionForm.valid) {
         const distribution = this.distributionForm.value;
-        console.log(distribution);
         distribution.id = this.distributionId;
+        distribution.teacher = distribution.teacher.email;
         this.distributionService.updateDistribution(distribution).subscribe(
           (savedDistribution) => {
             Modal.getInstance(document.getElementById('distributionModal')!)?.hide();
@@ -225,7 +227,7 @@ export class DistributionComponent implements OnInit, AfterViewInit{
       this.distributions = distributions;
       this.dataSource.data = this.mapDistributionsToDataSource(distributions);
     });
-    this.displayedColumns = ['teacher','subject', 'studyProgram', 'semester', 'countHours','sessionCount' ,'classType','actions'];
+    this.displayedColumns = ['teacher','email','subject', 'studyProgram', 'semester', 'countHours','sessionCount' ,'classType','actions'];
 
     this.teacherService.getTeachers().subscribe((teachers) => {
       this.teachers = teachers.map(teacher => ({
@@ -233,10 +235,6 @@ export class DistributionComponent implements OnInit, AfterViewInit{
         fullName: `${teacher.firstName} ${teacher.lastName}`,
       }));
     });
-    this.teachers = this.teachers.map(teacher => ({
-      ...teacher,
-      fullName: `${teacher.firstName} ${teacher.lastName}`,
-    }));
 
     this.subjectService.getSubjects().subscribe((subjects) =>{
       this.subjects = subjects;
@@ -263,7 +261,8 @@ export class DistributionComponent implements OnInit, AfterViewInit{
           : distribution.subject?.lectureSessions,
         subject: distribution.subject?.name,
         classType: distribution.classType,
-        sessionCount: distribution.sessionCount
+        sessionCount: distribution.sessionCount,
+        email: distribution.teacher?.email,
       };
     });
   }
@@ -283,7 +282,7 @@ export class DistributionComponent implements OnInit, AfterViewInit{
       //this.filterDistributions(distributions);
       this.dataSource.data = this.filterDistributions(distributions);
     });
-    this.displayedColumns = ['name','studyProgram', 'mismatchType', 'mismatchCount','actions'];
+    this.displayedColumns = ['name','email','studyProgram', 'mismatchType', 'mismatchCount','actions'];
 
   }
 
@@ -301,14 +300,20 @@ export class DistributionComponent implements OnInit, AfterViewInit{
     const grouped = distributions.reduce((acc: any, distribution: any) => {
       const key = `${distribution.subject.name}-${distribution.classType}-${distribution.subject.studyProgram}`;
       if (!acc[key]) {
-        acc[key] = { subject: distribution.subject.name, classType: distribution.classType,studyProgram:distribution.subject.studyProgram ,sessionCount: 0 };
+        acc[key] = {
+          subject: distribution.subject.name,
+          classType: distribution.classType,
+          studyProgram:distribution.subject.studyProgram ,
+          sessionCount: 0,
+          email:distribution.teacher.email
+        };
       }
       acc[key].sessionCount += distribution.sessionCount;
       return acc;
     }, {});
 
     for (const key in grouped) {
-      const { subject, classType, studyProgram ,sessionCount } = grouped[key];
+      const { subject, classType, studyProgram ,sessionCount,email } = grouped[key];
       const matchingSubject = this.subjects.find((sub: any) => sub.name === subject && sub.studyProgram === studyProgram);
 
       if (matchingSubject) {
@@ -323,6 +328,7 @@ export class DistributionComponent implements OnInit, AfterViewInit{
             countHours: classType === 'vezbe' ? matchingSubject.exerciseHours : matchingSubject.lectureHours,
             mismatchCount: difference,
             classType: classType,
+            email:email
           };
           filteredSubjects.push(filteredSubject);
         }

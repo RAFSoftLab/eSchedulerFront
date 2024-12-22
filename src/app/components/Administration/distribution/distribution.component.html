@@ -39,6 +39,9 @@
                     [placeholder]="distributionForm.get('teacher')?.value ? '' : 'Izaberite učitelja'"
                     formControlName="teacher"
                     [searchable]="true">
+                    <ng-template ng-label-tmp let-item="item">
+                      {{ item.fullName }} - {{ item.email }}
+                    </ng-template>
                   </ng-select>
                 </div>
                 <div class="mb-3">
