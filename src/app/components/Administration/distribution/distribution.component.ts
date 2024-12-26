@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
@@ -40,7 +40,6 @@ export class DistributionComponent implements OnInit, AfterViewInit{
   activeOption: string = 'first';
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-
 
   columnNamesMap: { [key: string]: string } = {
     teacher: 'Profesor',
@@ -278,12 +277,15 @@ export class DistributionComponent implements OnInit, AfterViewInit{
 
   setSecondActive(): void {
     this.activeOption = 'second';
-    this.distributionService.getDistributions().subscribe((distributions) => {
-      //this.filterDistributions(distributions);
-      this.dataSource.data = this.filterDistributions(distributions);
-    });
+    this.distributionService.getDistributions().subscribe(
+      (distributions) => {
+        this.dataSource.data = this.filterDistributions(distributions);
+      },
+      (error) => {
+        console.error('Došlo je do greške pri učitavanju distribucija:', error);
+      }
+    );
     this.displayedColumns = ['name','email','studyProgram', 'mismatchType', 'mismatchCount','actions'];
-
   }
 
   onSubjectChange(event: Subject): void {

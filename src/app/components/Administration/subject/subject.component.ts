@@ -160,6 +160,7 @@ export class SubjectComponent implements OnInit,AfterViewInit{
               panelClass: ['success-snackbar']
             });
             // Update teacher in the table
+            console.log(savedSubject);
             this.subjects.unshift(savedSubject);
             this.dataSource.data = this.subjects;
 

@@ -6,7 +6,7 @@
       <div style="margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between;">
         <mat-form-field style="width: 30vh; margin: 0;" appearance="outline" class="search-field">
           <mat-label>Search</mat-label>
-          <input matInput (keyup)="applyFilter($event)" placeholder="Enter search term">
+          <input matInput #searchInput (keyup)="applyFilter($event)" placeholder="Enter search term">
         </mat-form-field>
 
         <!-- Toggle Buttons -->
