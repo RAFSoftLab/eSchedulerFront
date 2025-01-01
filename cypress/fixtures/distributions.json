@@ -1,0 +1,54 @@
+[
+  {
+    "id": 1,
+    "teacher": {
+      "id": 1,
+      "firstName": "Marko",
+      "lastName": "Markovic",
+      "email": "mmarkovic@raf.rs",
+      "title": "nastavnik",
+      "summaryLectureHours": 20,
+      "summaryExerciseHours": 10
+    },
+    "subject": {
+      "id": 1,
+      "name": "Matematika",
+      "studyProgram": "RN",
+      "semester": 1,
+      "lectureHours": 30,
+      "exerciseHours": 15,
+      "practicumHours": 0,
+      "mandatory": true,
+      "lectureSessions": 5,
+      "exerciseSessions": 15
+    },
+    "classType": "Predavanja",
+    "sessionCount": 5
+  },
+  {
+    "id": 2,
+    "teacher": {
+      "id": 2,
+      "firstName": "Jovana",
+      "lastName": "Jovanovic",
+      "email": "jjovanovic@raf.rs",
+      "title": "saradnik",
+      "summaryLectureHours": 15,
+      "summaryExerciseHours": 5
+    },
+    "subject": {
+      "id": 2,
+      "name": "Programiranje",
+      "studyProgram": "SI",
+      "semester": 2,
+      "lectureHours": 30,
+      "exerciseHours": 15,
+      "practicumHours": 5,
+      "mandatory": false,
+      "lectureSessions": 6,
+      "exerciseSessions": 15
+    },
+    "classType": "Vežbe",
+    "sessionCount": 5
+  }
+]

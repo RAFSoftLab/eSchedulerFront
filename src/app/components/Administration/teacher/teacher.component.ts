@@ -75,6 +75,7 @@ export class TeacherComponent implements OnInit,AfterViewInit{
     });
   }
   editTeacher(teacher: any) {
+    console.log(teacher);
     this.teacherId = teacher.id;
     this.createNewTeacher = false;
     this.teacherTitles = Array.from(new Set(this.teachers.map(teacher => teacher.title)));
@@ -136,7 +137,6 @@ export class TeacherComponent implements OnInit,AfterViewInit{
               duration: 5000,
               panelClass: ['success-snackbar']
             });
-            // Update teacher in the table
               this.teachers.unshift(savedTeacher);
               this.dataSource.data = this.teachers;
 

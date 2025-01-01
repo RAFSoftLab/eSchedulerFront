@@ -174,17 +174,20 @@ export class HomeComponent implements OnInit {
   }
 
   onRowClicked(row: any) {
-
+    console.log("ZISOV -> ", row.email);
     if(row.hasOwnProperty('title')) {
       this.summaryRows = 1;
-      this.selectedDistributions = this.distributions.filter((distribution: { teacher: any; }) => distribution.teacher.id === row.id);
+      this.selectedDistributions = this.distributions.filter((distribution: { teacher: any; }) => distribution.teacher.email == row.email);
       this.displayedColumns = ['teacher','subject', 'studyProgram', 'semester', 'countHours','sessionCount' ,'classType'];
       this.dataSource.paginator = this.paginator;
+      console.log("SELECTED DISTRIBUTIONS->",this.selectedDistributions);
+      console.log("SELECTED DISTRIBUTIONS->",this.distributions[0]);
     }else if (row.hasOwnProperty('name')){
       this.summaryRows = 2;
       this.displayedColumns = ['teacher','subject', 'studyProgram', 'semester', 'countHours','sessionCount' ,'classType'];
       this.selectedDistributions = this.distributions.filter((distribution: { subject: any; }) => distribution.subject.id === row.id);
       this.dataSource.paginator = this.paginator;
+      console.log("SELECTED DISTRIBUTIONS->"+this.selectedDistributions);
     }
 
     // Mapping data

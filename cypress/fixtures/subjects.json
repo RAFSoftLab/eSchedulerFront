@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "name": "Matematika",
+    "studyProgram": "RN",
+    "semester": 1,
+    "lectureHours": 30,
+    "exerciseHours": 15,
+    "practicumHours": 5,
+    "mandatory": "obavezan",
+    "lectureSessions": 5,
+    "exerciseSessions": 15
+  },
+  {
+    "id": 2,
+    "name": "Programiranje",
+    "studyProgram": "SI",
+    "semester": 2,
+    "lectureHours": 30,
+    "exerciseHours": 15,
+    "practicumHours": 5,
+    "mandatory": "izborni",
+    "lectureSessions": 6,
+    "exerciseSessions": 15
+  }
+]
