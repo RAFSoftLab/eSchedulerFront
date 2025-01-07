@@ -41,4 +41,4 @@ jobs:
 
       # Push the Docker image to Docker Hub
       - name: Push Docker Image
-        run: docker push icicka/escheduler:latest_front
+        run: docker push ivancicka652/escheduler:latest_front
