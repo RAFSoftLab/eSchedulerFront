@@ -208,7 +208,7 @@ export class TeacherComponent implements OnInit,AfterViewInit{
   updateEmail(): void {
     const firstName = this.teacherForm.get('firstName')?.value || '';
     const lastName = this.teacherForm.get('lastName')?.value || '';
-    const email = `${firstName[0]?.toLowerCase() || ''}.${lastName?.toLowerCase() || ''}@raf.rs`;
+    const email = `${firstName[0]?.toLowerCase() || ''}${lastName?.toLowerCase() || ''}@raf.rs`;
     this.teacherForm.patchValue({ email });
   }
 
