@@ -18,7 +18,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 16 # Use the Node.js version your Angular project requires
+          node-version: 19 # Use the Node.js version your Angular project requires
 
       # Install dependencies
       - name: Install Dependencies
@@ -37,8 +37,8 @@ jobs:
 
       # Build the Docker image with specific tag
       - name: Build Docker Image
-        run: docker build -t icicka/escheduler:latest_front .
+        run: docker build -t ivancicka652/escheduler:latest_front .
 
       # Push the Docker image to Docker Hub
       - name: Push Docker Image
-        run: docker push icicka/escheduler:latest_front
+        run: docker push ivancicka652/escheduler:latest_front
