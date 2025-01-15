@@ -14,7 +14,8 @@ COPY . .
 RUN npm run build --prod
 
 # Port na kojem Angular radi
-EXPOSE 80
+EXPOSE 8080
+
 
 # Pokretanje aplikacije koristeći nginx
-CMD ["npx", "http-server", "dist/eSchedulerFront"]
+CMD ["npx", "http-server", "dist/e-scheduler-front", "-p", "8080", "-a", "0.0.0.0"]
