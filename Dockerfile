@@ -18,4 +18,4 @@ EXPOSE 8080
 
 
 # Pokretanje aplikacije koristeći nginx
-CMD ["npx", "http-server", "dist/e-scheduler-front", "-p", "8080", "-a", "0.0.0.0"]
+CMD ["npx", "http-server", "dist/e-scheduler-front"]
