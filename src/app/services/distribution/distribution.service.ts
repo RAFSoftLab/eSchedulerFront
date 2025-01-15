@@ -12,19 +12,19 @@ export class DistributionService {
   constructor(private httpClient:HttpClient) { }
 
   getDistributions(): Observable<Distribution[]>{
-    return this.httpClient.get<Distribution[]>('http://localhost:8080/api/distributions');
+    return this.httpClient.get<Distribution[]>('http://localhost:2525/api/distributions');
   }
 
   updateDistribution(distribution: Distribution): Observable<Distribution>{
-    return this.httpClient.put<Distribution>('http://localhost:8080/api/distributions', distribution);
+    return this.httpClient.put<Distribution>('http://localhost:2525/api/distributions', distribution);
   }
 
   saveDistribution(distribution: Distribution): Observable<Distribution>{
-    return this.httpClient.post<Distribution>('http://localhost:8080/api/distributions', distribution);
+    return this.httpClient.post<Distribution>('http://localhost:2525/api/distributions', distribution);
   }
 
   deleteDistribution(id: number): Observable<any>{
-    return this.httpClient.delete('http://localhost:8080/api/distributions/' + id);
+    return this.httpClient.delete('http://localhost:2525/api/distributions/' + id);
   }
 
 }

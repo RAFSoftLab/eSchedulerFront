@@ -12,17 +12,17 @@ export class SubjectService {
   constructor(private httpClient:HttpClient) { }
 
   getSubjects(): Observable<Subject[]>{
-    return this.httpClient.get<Subject[]>('http://localhost:8080/api/subjects');
+    return this.httpClient.get<Subject[]>('http://localhost:2525/api/subjects');
   }
 
   saveSubject(subject: Subject): Observable<Subject>{
-    return this.httpClient.post<Subject>('http://localhost:8080/api/subjects', subject);
+    return this.httpClient.post<Subject>('http://localhost:2525/api/subjects', subject);
   }
 
   updateSubject(subject: Subject): Observable<Subject>{
-    return this.httpClient.put<Subject>('http://localhost:8080/api/subjects', subject);
+    return this.httpClient.put<Subject>('http://localhost:2525/api/subjects', subject);
   }
   deleteSubject(id: number): Observable<any>{
-    return this.httpClient.delete('http://localhost:8080/api/subjects/'+id);
+    return this.httpClient.delete('http://localhost:2525/api/subjects/'+id);
   }
 }

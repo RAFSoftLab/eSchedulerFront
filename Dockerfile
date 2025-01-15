@@ -14,8 +14,8 @@ COPY . .
 RUN npx ng build --configuration production
 
 # Port na kojem Angular radi
-EXPOSE 8080
+EXPOSE 2526
 
 
 # Pokretanje aplikacije koristeći nginx
-CMD ["npx", "http-server", "dist/e-scheduler-front"]
+CMD ["npx", "http-server", "dist/e-scheduler-front", "-p", "2526"]
