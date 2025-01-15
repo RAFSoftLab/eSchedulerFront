@@ -11,7 +11,7 @@ RUN npm install
 COPY . .
 
 # Build Angular aplikacije
-RUN npm run build --prod
+RUN npx ng build --configuration production
 
 # Port na kojem Angular radi
 EXPOSE 8080
