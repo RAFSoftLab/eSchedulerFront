@@ -11,8 +11,8 @@ export class UsersService {
 
   constructor(private httpClient:HttpClient) { }
 
-  getUser(email: string, password:string): Observable<ResponseDTO<User>>{
+  getUser(email: string, password:string): Observable<ResponseDTO<String>>{
     const body = {email,password};
-    return this.httpClient.post<ResponseDTO<User>>('http://localhost:2525/api/users/information', body);
+    return this.httpClient.post<ResponseDTO<String>>('http://localhost:2525/api/users/information', body);
   }
 }

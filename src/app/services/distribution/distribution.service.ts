@@ -3,6 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {Teacher} from '../../models/teacher.model';
 import {Distribution} from '../../models/distribution.model';
+import {standardUser} from '../../models/standardUser.model';
 
 @Injectable({
   providedIn: 'root'
@@ -26,5 +27,10 @@ export class DistributionService {
   deleteDistribution(id: number): Observable<any>{
     return this.httpClient.delete('http://localhost:2525/api/distributions/' + id);
   }
+
+  getStandardUser(email: String): Observable<standardUser[]>{
+    return this.httpClient.get<standardUser[]>('http://localhost:2525/api/distributions/' +email);
+  }
+
 
 }

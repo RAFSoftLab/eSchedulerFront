@@ -314,8 +314,41 @@ export class DistributionComponent implements OnInit, AfterViewInit{
       return acc;
     }, {});
 
+    // Provera subjekata koji nisu u distribucijama
+    this.subjects.forEach((subject: any) => {
+      const isInDistributions = distributions.some(
+        (distribution: any) =>
+          distribution.subject.name === subject.name &&
+          distribution.subject.studyProgram === subject.studyProgram
+      );
+
+      if (!isInDistributions) {
+        // Ako predmet nije u distribucijama, dodajemo posebno predavanja i vežbe
+        if (subject.lectureSessions > 0) {
+          filteredSubjects.push({
+            ...subject,
+            mismatchType: 'predavanja',
+            countHours: subject.lectureHours,
+            mismatchCount: subject.lectureSessions,
+            classType: 'predavanja',
+            email: null
+          });
+        }
+        if (subject.exerciseSessions > 0) {
+          filteredSubjects.push({
+            ...subject,
+            mismatchType: 'vezbe',
+            countHours: subject.exerciseHours,
+            mismatchCount: subject.exerciseSessions,
+            classType: 'vezbe',
+            email: null
+          });
+        }
+      }
+    });
+
     for (const key in grouped) {
-      const { subject, classType, studyProgram ,sessionCount,email } = grouped[key];
+      const { subject, classType, studyProgram ,sessionCount } = grouped[key];
       const matchingSubject = this.subjects.find((sub: any) => sub.name === subject && sub.studyProgram === studyProgram);
 
       if (matchingSubject) {
@@ -330,7 +363,7 @@ export class DistributionComponent implements OnInit, AfterViewInit{
             countHours: classType === 'vezbe' ? matchingSubject.exerciseHours : matchingSubject.lectureHours,
             mismatchCount: difference,
             classType: classType,
-            email:email
+            email:null
           };
           filteredSubjects.push(filteredSubject);
         }

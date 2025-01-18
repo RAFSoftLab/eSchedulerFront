@@ -31,7 +31,13 @@ export class LoginComponent {
     this.userService.getUser(loginData.email,loginData.password).subscribe((response) => {
       if(response.success && this.loginForm.valid){
         this.user = response.data;
-        this.router.navigate(['/']);
+        if(this.user.isAdmin){
+          this.router.navigate(['']);
+        }else{
+          this.router.navigate(['standardUser'],{
+            state: {user: this.user}
+          });
+        }
       }else if(!response.success){
         this.user = null;
         alert(response.message);

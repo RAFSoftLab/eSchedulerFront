@@ -1,21 +1,13 @@
 # Frontend Dockerfile
-FROM node:22.11.0-alpine
-
+FROM node:22.11.0 AS angular
 WORKDIR /app
-
-# Kopiranje package.json i instalacija zavisnosti
-COPY package*.json ./
+COPY package*.json .
 RUN npm install
-
-# Kopiranje ostatka frontend koda
 COPY . .
+RUN npm run build
 
-# Build Angular aplikacije
-RUN npx ng build --configuration production
-
-# Port na kojem Angular radi
-EXPOSE 2526
+FROM nginx:alpine
+COPY --from=angular /app/dist/e-scheduler-front/browser /usr/share/nginx/html
+EXPOSE 80
 
 
-# Pokretanje aplikacije koristeći nginx
-CMD ["npx", "http-server", "dist/e-scheduler-front", "-p", "2526"]
