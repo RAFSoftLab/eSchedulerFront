@@ -62,9 +62,9 @@ git clone https://github.com/RAFSoftLab/eSchedulerFront.git eSchedulerFront
 
 ## 🔹 **2. Configure the Database**
 1. **Create a MySQL database** named `raspodelanastave` using **phpMyAdmin** or the MySQL command line.
-2. **Update the database credentials** in the backend configuration file (`application.properties` or `application.yml`):
+2. **Update the database credentials** in the backend configuration file (`application.properties`):
     ```properties
-    spring.datasource.url=jdbc:mysql://localhost:3306/raspodelanastave
+    spring.datasource.url=jdbc:mysql://localhost:2524/raspodelanastave
     spring.datasource.username=your_username
     spring.datasource.password=your_password
     ```
@@ -81,7 +81,7 @@ git clone https://github.com/RAFSoftLab/eSchedulerFront.git eSchedulerFront
     ./gradlew bootRun
     ```
 3. **The backend server will start on**:
-   👉 **http://localhost:8080**
+   👉 **http://localhost:2525**
 
 ---
 
@@ -99,14 +99,14 @@ git clone https://github.com/RAFSoftLab/eSchedulerFront.git eSchedulerFront
     ng serve
     ```
 4. **The frontend server will start on**:
-   👉 **http://localhost:4200**
+   👉 **http://localhost:2526**
 
 ---
 
 ## 📚 **API Documentation**
 API documentation for the backend is automatically generated using **Swagger**.
 You can access it at:
-👉 **http://localhost:8080/swagger-ui.html**
+👉 **http://localhost:2525/swagger-ui.html**
 
 ---
 
