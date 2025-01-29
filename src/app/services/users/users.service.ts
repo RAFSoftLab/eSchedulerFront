@@ -13,6 +13,8 @@ export class UsersService {
 
   getUser(email: string, password:string): Observable<ResponseDTO<String>>{
     const body = {email,password};
-    return this.httpClient.post<ResponseDTO<String>>('http://localhost:2525/api/users/information', body);
+    // return this.httpClient.post<ResponseDTO<String>>('http://localhost:2525/api/users/information', body);
+    return this.httpClient.post<ResponseDTO<String>>('/api/users/information', body);
+
   }
 }
