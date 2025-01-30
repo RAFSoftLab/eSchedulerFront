@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {Teacher} from '../../models/teacher.model';
 import {Distribution} from '../../models/distribution.model';
 import {standardUser} from '../../models/standardUser.model';
+import {environment} from '../../../enviroments/enviroment';
 
 @Injectable({
   providedIn: 'root'
@@ -13,33 +13,23 @@ export class DistributionService {
   constructor(private httpClient:HttpClient) { }
 
   getDistributions(): Observable<Distribution[]>{
-    // return this.httpClient.get<Distribution[]>('http://localhost:2525/api/distributions');
-    return this.httpClient.get<Distribution[]>('/api/distributions');
-
+    return this.httpClient.get<Distribution[]>(`${environment.apiUrl}/distributions`);
   }
 
   updateDistribution(distribution: Distribution): Observable<Distribution>{
-    // return this.httpClient.put<Distribution>('http://localhost:2525/api/distributions', distribution);
-    return this.httpClient.put<Distribution>('/api/distributions', distribution);
-
+    return this.httpClient.put<Distribution>(`${environment.apiUrl}/distributions`, distribution);
   }
 
   saveDistribution(distribution: Distribution): Observable<Distribution>{
-    // return this.httpClient.post<Distribution>('http://localhost:2525/api/distributions', distribution);
-    return this.httpClient.post<Distribution>('/api/distributions', distribution);
-
+    return this.httpClient.post<Distribution>(`${environment.apiUrl}/distributions`, distribution);
   }
 
   deleteDistribution(id: number): Observable<any>{
-    // return this.httpClient.delete('http://localhost:2525/api/distributions/' + id);
-    return this.httpClient.delete('/api/distributions/' + id);
-
+    return this.httpClient.delete(`${environment.apiUrl}/distributions/` + id);
   }
 
   getStandardUser(email: String): Observable<standardUser[]>{
-    // return this.httpClient.get<standardUser[]>('http://localhost:2525/api/distributions/' +email);
-    return this.httpClient.get<standardUser[]>('/api/distributions/' +email);
-
+    return this.httpClient.get<standardUser[]>(`${environment.apiUrl}/distributions/` +email);
   }
 
 

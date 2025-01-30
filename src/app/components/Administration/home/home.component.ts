@@ -13,11 +13,12 @@ import {SubjectService} from '../../../services/subject/subject.service';
 import {DistributionService} from '../../../services/distribution/distribution.service';
 import {Distribution} from '../../../models/distribution.model';
 import {TeacherSummary} from '../../../models/teacherSummary.model';
+import {MatMenuModule} from '@angular/material/menu';
 
 
 @Component({
   selector: 'app-home',
-  imports: [CommonModule, MatTableModule, MatPaginatorModule, MatSortModule, NgIf, MatButtonModule, MatFormFieldModule, MatInputModule],
+  imports: [CommonModule, MatTableModule, MatPaginatorModule, MatSortModule, NgIf, MatButtonModule, MatFormFieldModule, MatInputModule,MatMenuModule],
   templateUrl: './home.component.html',
   standalone: true,
   styleUrl: './home.component.css'
@@ -85,7 +86,6 @@ export class HomeComponent implements OnInit {
         summaryExerciseHours: 0,
         summaryLectureHours: 0,
       }));
-      // this.showTeachers();
     });
 
     this.subjectService.getSubjects().subscribe((subjects) => {
@@ -174,7 +174,6 @@ export class HomeComponent implements OnInit {
   }
 
   onRowClicked(row: any) {
-    console.log("ZISOV -> ", row.email);
     if(row.hasOwnProperty('title')) {
       this.summaryRows = 1;
       this.selectedDistributions = this.distributions.filter((distribution: { teacher: any; }) => distribution.teacher.email == row.email);
@@ -213,6 +212,35 @@ export class HomeComponent implements OnInit {
     this.isDistributionButtonDisabled = this.selectedDistributions.length === 0;
   }
 
+
+  exportData(type: 'teachers' | 'subjects' | 'distributions'): void {
+    let data;
+    let fileName = '';
+
+    switch (type) {
+      case 'teachers':
+        data = this.teachers;
+        fileName = 'teachers.json';
+        break;
+      case 'subjects':
+        data = this.subjects;
+        fileName = 'subjects.json';
+        break;
+      case 'distributions':
+        data = this.distributions;
+        fileName = 'distributions.json';
+        break;
+    }
+
+    const jsonData = JSON.stringify(data, null, 2);
+    const blob = new Blob([jsonData], { type: 'application/json' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  }
 
 
 }

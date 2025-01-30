@@ -71,9 +71,21 @@
           <span class="value">{{ totalExercises }}</span>
         </div>
       </div>
-
       <!-- Paginator -->
-      <mat-paginator [pageSize]="10" [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons></mat-paginator>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+
+        <button mat-button [matMenuTriggerFor]="exportMenu" color="primary">Export</button>
+
+        <mat-paginator [pageSize]="10" [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons></mat-paginator>
+
+        <!-- Export Dropdown -->
+        <mat-menu #exportMenu="matMenu">
+          <button mat-menu-item (click)="exportData('teachers')">Exportuj Nastavnike</button>
+          <button mat-menu-item (click)="exportData('subjects')">Exportuj Predmete</button>
+          <button mat-menu-item (click)="exportData('distributions')">Exportuj Distribucije</button>
+        </mat-menu>
+
+      </div>
     </div>
   </div>
 </div>
