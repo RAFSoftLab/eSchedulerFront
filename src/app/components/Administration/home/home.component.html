@@ -80,9 +80,21 @@
 
         <!-- Export Dropdown -->
         <mat-menu #exportMenu="matMenu">
-          <button mat-menu-item (click)="exportData('teachers')">Exportuj Nastavnike</button>
-          <button mat-menu-item (click)="exportData('subjects')">Exportuj Predmete</button>
-          <button mat-menu-item (click)="exportData('distributions')">Exportuj Distribucije</button>
+          <button mat-menu-item [matMenuTriggerFor]="exportJsonMenu">Export to JSON</button>
+          <button mat-menu-item [matMenuTriggerFor]="exportPdfMenu">Export to PDF</button>
+        </mat-menu>
+
+        <!-- JSON Export Menu -->
+        <mat-menu #exportJsonMenu="matMenu">
+          <button mat-menu-item (click)="exportData('teachers', 'json')">Exportuj Nastavnike</button>
+          <button mat-menu-item (click)="exportData('subjects', 'json')">Exportuj Predmete</button>
+          <button mat-menu-item (click)="exportData('distributions', 'json')">Exportuj Distribucije</button>
+        </mat-menu>
+
+        <!-- PDF Export Menu -->
+        <mat-menu #exportPdfMenu="matMenu">
+          <button mat-menu-item (click)="exportData('teachers', 'pdf')">Exportuj Nastavnike</button>
+          <button mat-menu-item (click)="exportData('subjects', 'pdf')">Exportuj Predmete</button>
         </mat-menu>
 
       </div>

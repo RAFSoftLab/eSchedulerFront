@@ -14,6 +14,13 @@ import {DistributionService} from '../../../services/distribution/distribution.s
 import {Distribution} from '../../../models/distribution.model';
 import {TeacherSummary} from '../../../models/teacherSummary.model';
 import {MatMenuModule} from '@angular/material/menu';
+import pdfMake from 'pdfmake/build/pdfmake';
+import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+
+(pdfMake as any).vfs = pdfFonts;
+
+
+
 
 
 @Component({
@@ -213,7 +220,16 @@ export class HomeComponent implements OnInit {
   }
 
 
-  exportData(type: 'teachers' | 'subjects' | 'distributions'): void {
+
+  exportData(type: 'teachers' | 'subjects' | 'distributions', format: 'json' | 'pdf') {
+    if (format === 'json') {
+      this.exportDataToJson(type)
+    } else if (format === 'pdf') {
+      this.exportDataToPdf(type)
+    }
+  }
+
+  exportDataToJson(type: 'teachers' | 'subjects' | 'distributions'): void {
     let data;
     let fileName = '';
 
@@ -240,6 +256,166 @@ export class HomeComponent implements OnInit {
     a.download = fileName;
     a.click();
     window.URL.revokeObjectURL(url);
+  }
+
+
+
+
+
+
+  exportDataToPdf(type: 'teachers' | 'subjects' | 'distributions'): void {
+    let data: any[];
+    let fileName = '';
+
+    switch (type) {
+      case 'teachers':
+        data = this.teacherSummary;
+        fileName = 'teachers.pdf';
+        break;
+      case 'subjects':
+        data = this.subjects;
+        fileName = 'subjects.pdf';
+        break;
+      case 'distributions':
+        data = this.distributions;
+        fileName = 'distributions.pdf';
+        break;
+      default:
+        console.warn(`Nepoznat tip podataka: ${type}`);
+        return;
+    }
+
+    if (!data || data.length === 0) {
+      console.warn(`Nema podataka za ${type}`);
+      return;
+    }
+
+    const docDefinition = {
+      content: [
+        { text: `Izveštaj - ${type.charAt(0).toUpperCase() + type.slice(1)}`, style: 'header' },
+        ...this.generateContentForPdf(type, data)
+      ],
+      styles: {
+        header: {
+          fontSize: 18,
+          bold: true,
+          alignment: 'center' as const,
+          margin: [0, 0, 0, 10] as [number,number,number,number]
+        },
+        subheader: {
+          fontSize: 14,
+          bold: true,
+          margin: [0, 10, 0, 5] as [number,number,number,number]
+        },
+        tableHeader: {
+          bold: true,
+          fontSize: 12,
+          color: 'white',
+          fillColor: '#2980b9',
+          alignment: 'center' as const,
+          margin: [0,0,0,0] as [number,number,number,number]
+        }
+      },
+      defaultStyle: {
+        font: 'Roboto',
+        fontSize: 10
+      },
+      fonts:{
+        Roboto: {
+          normal: 'Roboto-Regular.ttf',
+          bold: 'Roboto-Medium.ttf',
+          italics: 'Roboto-Italic.ttf',
+          bolditalics: 'Roboto-MediumItalic.ttf'
+        }
+      }
+    };
+
+    pdfMake.createPdf(docDefinition).download(fileName);
+  }
+
+  generateContentForPdf(type: string, data: any[]): any[] {
+    const content: any[] = [];
+
+    if (type === 'teachers') {
+      data.forEach((teacherSummary: TeacherSummary) => {
+        const teacher = this.teachers.find(t => t.id === teacherSummary.id);
+
+        content.push(
+          { text: `${teacherSummary.lastName} ${teacherSummary.firstName} - ${teacher?.title || 'N/A'}`, style: 'subheader' },
+          { text: `Fond časova: ${teacherSummary.summaryLectureHours + teacherSummary.summaryExerciseHours}`, margin: [0, 0, 0, 10] }
+        );
+
+        const teacherDistributions = this.distributions.filter(dist => dist.teacher.id === teacherSummary.id);
+        const tableData = teacherDistributions.map(dist => [
+          dist.subject.name,
+          dist.subject.studyProgram,
+          dist.subject.semester,
+          dist.classType === 'vezbe' ? 'Vežbe' : 'Predavanja',
+          dist.classType === 'vezbe' ? dist.subject.exerciseHours : dist.subject.lectureHours,
+          dist.sessionCount,
+          (dist.classType === 'vezbe' ? dist.subject.exerciseHours : dist.subject.lectureHours) * 13 * dist.sessionCount
+        ]);
+
+        content.push({
+          table: {
+            headerRows: 1,
+            widths: ['*', '*', '*', '*', '*', '*', '*'],
+            body: [
+              [
+                { text: 'Naziv', style: 'tableHeader' },
+                { text: 'Stud. program', style: 'tableHeader' },
+                { text: 'Semestar', style: 'tableHeader' },
+                { text: 'Vrsta', style: 'tableHeader' },
+                { text: 'Fond', style: 'tableHeader' },
+                { text: 'Broj termina', style: 'tableHeader' },
+                { text: 'Ukupno', style: 'tableHeader' }
+              ],
+              ...tableData
+            ]
+          },
+          margin: [0, 0, 0, 20]
+        });
+      });
+    } else if (type === 'subjects') {
+      data.forEach((subject: Subject) => {
+        content.push(
+          { text: `${subject.name} - ${subject.studyProgram}, semestar: ${subject.semester}`, style: 'subheader' },
+          { text: `Termini predavanja: ${subject.lectureSessions}`, margin: [0, 0, 0, 5] },
+          { text: `Termini vežbi: ${subject.exerciseSessions}`, margin: [0, 0, 0, 10] }
+        );
+
+        const subjectDistributions = this.distributions.filter(dist => dist.subject.id === subject.id);
+        const tableData = subjectDistributions.map(dist => [
+          `${dist.teacher.lastName} ${dist.teacher.firstName}`,
+          dist.classType === 'vezbe' ? 'Vežbe' : 'Predavanja',
+          dist.sessionCount,
+          dist.classType === 'vezbe' ? dist.subject.exerciseHours : dist.subject.lectureHours,
+          (dist.classType === 'vezbe' ? dist.subject.exerciseHours : dist.subject.lectureHours) * 13 * dist.sessionCount
+        ]);
+
+        content.push({
+          table: {
+            headerRows: 1,
+            widths: ['*', '*', '*', '*', '*'],
+            body: [
+              [
+                { text: 'Prezime i ime', style: 'tableHeader' },
+                { text: 'Vrsta', style: 'tableHeader' },
+                { text: 'Broj termina', style: 'tableHeader' },
+                { text: 'Broj časova', style: 'tableHeader' },
+                { text: 'Ukupno', style: 'tableHeader' }
+              ],
+              ...tableData
+            ]
+          },
+          margin: [0, 0, 0, 20]
+        });
+      });
+    } else if (type === 'distributions') {
+      console.log('Implementacija za distribucije će biti dodata kasnije.');
+    }
+
+    return content;
   }
 
 
