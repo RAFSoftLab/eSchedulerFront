@@ -19,6 +19,7 @@
   <div class="section">
     <div class="table-container">
 
+
       <!-- Table -->
       <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 compact-table">
 
@@ -32,6 +33,25 @@
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
       </table>
+
+      <div class="custom-summary-rows">
+        <div class="summary-row">
+          <span class="label">Nedeljno časova neparni (P)</span>
+          <span class="value">{{ weeklyLecturesO }}</span>
+          <span class="label">Nedeljno časova parni (P)</span>
+          <span class="value">{{ weeklyLecturesE }}</span>
+          <span class="label">Ukupan fond (P)</span>
+          <span class="value">{{ totalLectures }}</span>
+        </div>
+        <div class="summary-row">
+          <span class="label">Nedeljno časova neparni (V)</span>
+          <span class="value">{{ weeklyExercisesO }}</span>
+          <span class="label">Nedeljno časova parni (V)</span>
+          <span class="value">{{ weeklyExercisesE }}</span>
+          <span class="label">Ukupan fond (V)</span>
+          <span class="value">{{ totalExercises }}</span>
+        </div>
+      </div>
 
     </div>
   </div>

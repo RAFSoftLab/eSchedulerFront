@@ -26,6 +26,15 @@ export class StandardUsersComponent implements OnInit{
   user: any;
   username : any
 
+  totalLectures = 0;
+  totalExercises = 0;
+  weeklyLecturesE = 0;
+  weeklyExercisesE = 0;
+  weeklyLecturesO = 0;
+  weeklyExercisesO = 0;
+
+
+
   // @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   columnNamesMap: { [key: string]: string } = {
@@ -42,25 +51,72 @@ export class StandardUsersComponent implements OnInit{
     this.dataSource = new MatTableDataSource<any>();
   }
 
+  calculateSummaryFromData() {
+    this.weeklyLecturesE = 0;
+    this.weeklyExercisesE = 0;
+    this.weeklyLecturesO = 0;
+    this.weeklyExercisesO = 0;
+    this.totalLectures = 0;
+    this.totalExercises = 0;
+
+    this.dataSource.data.forEach((row) => {
+      // console.log('Red podataka:', row);
+
+      let hoursPerWeek = 0;
+      // console.log("classType->",row);
+      if (row.classType === "vezbe") {
+        hoursPerWeek = row.exerciseHours ?? 0;
+      } else {
+        hoursPerWeek = row.lectureHours ?? 0;
+      }
+
+      const totalHours = hoursPerWeek * row.sessionCount *13;
+
+      if (row.classType === "vezbe") {
+        this.totalExercises += totalHours;
+        if (row.semester % 2 === 0) {
+          this.weeklyExercisesE += hoursPerWeek;
+        } else {
+          this.weeklyExercisesO += hoursPerWeek;
+        }
+      } else {
+        this.totalLectures += totalHours;
+        if (row.semester % 2 === 0) {
+          this.weeklyLecturesE += hoursPerWeek;
+        } else {
+          this.weeklyLecturesO += hoursPerWeek;
+        }
+      }
+    });
+
+  }
+
+
+
   ngOnInit(): void {
     this.user = this.authService.getEmail();
 
     this.distributionService.getStandardUser(this.user).subscribe((standardUsers) => {
-      this.standardUser = standardUsers;
-      // console.log(standardUsers)
+      this.standardUser = standardUsers.map(user => ({
+        ...user,
+        countHours: user.classType === 'vezbe' ? user.exerciseHours : user.lectureHours
+      }));
+
+      // console.log('Podaci učitani:', this.standardUser);
+
       this.dataSource.data = this.standardUser;
-      this.displayedColumns = ['name', 'studyProgram', 'semester','countHours','sessionCount','leftSessions','classType'];
-      // this.dataSource.paginator = this.paginator;
+      this.displayedColumns = ['name', 'studyProgram', 'semester', 'countHours', 'sessionCount', 'leftSessionCount', 'classType'];
 
       if (this.standardUser.length > 0) {
+        this.calculateSummaryFromData();
         const { firstName, lastName } = this.standardUser[0];
         this.username = `${firstName} ${lastName}`;
       } else {
-        console.warn('Standard user array is empty.');
         this.username = 'Nepoznat korisnik';
       }
     });
   }
+
 
 
   onLogout(): void {
