@@ -1,50 +1,64 @@
-import { Component} from '@angular/core';
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {Router} from '@angular/router';
-import {UsersService} from '../../services/users/users.service';
-import {CommonModule} from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { OAuthService } from 'angular-oauth2-oidc';
+import { Router } from '@angular/router';
+import { UsersService } from '../../services/users/users.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule,CommonModule],
   templateUrl: './login.component.html',
-  standalone: true,
-  styleUrl: './login.component.css'
+  styleUrls: ['./login.component.css'],
 })
 export class LoginComponent {
-  loginForm: FormGroup;
-  isApproved: boolean = false;
-  user: any;
+  constructor(
+    private usersService: UsersService,
+    private oauthService: OAuthService,
+    private router: Router,
+    private authService: AuthService
+  ) {}
 
-  constructor(private fb: FormBuilder,private router: Router,private userService: UsersService) {
-    this.loginForm = this.fb.group({
-      email: ['',[Validators.required, Validators.email]],
-      password: ['',[Validators.required, Validators.minLength(6)]],
-      rememberPassword: [false]
+
+
+  loginWithGoogle() {
+    this.oauthService.initLoginFlow();
+
+    this.oauthService.tryLoginImplicitFlow().then(() => {
+      this.handleLoginSuccess();
     });
   }
 
+  private handleLoginSuccess() {
+    const idToken = this.oauthService.getIdToken();
 
-  onSubmit() {
-    const loginData = this.loginForm.value;
+    if (!idToken) {
+      console.error('Greška: Nema validnog ID tokena.');
+      this.router.navigate(['/login']);
+      return;
+    }
+    this.usersService.authenticateUser(idToken).subscribe({
+      next: (response: any) => {
+        if (response.token) {
+          this.authService.setToken(response.token);
 
-    this.userService.getUser(loginData.email,loginData.password).subscribe((response) => {
-      if(response.success && this.loginForm.valid){
-        this.user = response.data;
-        if(this.user.isAdmin){
-          this.router.navigate(['']);
-        }else{
-          this.router.navigate(['standardUser'],{
-            state: {user: this.user}
-          });
+          this.redirectBasedOnRole();
+        } else {
+          console.log("Ne postoji token: " , response.token)
+          this.router.navigate(['/login']);
         }
-      }else if(!response.success){
-        this.user = null;
-        alert(response.message);
-      }else{
-        alert('Invalid form!');
-      }
+      },
+      error: (error) => {
+        console.error('Greška pri komunikaciji sa backendom', error);
+        this.router.navigate(['/login']);
+      },
     });
   }
 
+  private redirectBasedOnRole() {
+    // console.log("redirektuje")
+    if (this.authService.isAdmin()) {
+      this.router.navigate(['/admin']);
+    } else {
+      this.router.navigate(['/standardUser']);
+    }
+  }
 }

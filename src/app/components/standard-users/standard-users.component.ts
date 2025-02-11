@@ -9,6 +9,7 @@ import {DistributionService} from '../../services/distribution/distribution.serv
 import {standardUser} from '../../models/standardUser.model';
 import {MatSortModule} from '@angular/material/sort';
 import {Router} from '@angular/router';
+import {AuthService} from '../../services/auth.service';
 
 
 @Component({
@@ -37,16 +38,16 @@ export class StandardUsersComponent implements OnInit{
     classType: 'Vrsta',
   };
 
-  constructor(private router: Router,private distributionService: DistributionService) {
+  constructor(private router: Router,private distributionService: DistributionService,private authService: AuthService) {
     this.dataSource = new MatTableDataSource<any>();
-
   }
 
   ngOnInit(): void {
-    this.user = history.state.user;
+    this.user = this.authService.getEmail();
+
     this.distributionService.getStandardUser(this.user).subscribe((standardUsers) => {
       this.standardUser = standardUsers;
-      console.log(standardUsers)
+      // console.log(standardUsers)
       this.dataSource.data = this.standardUser;
       this.displayedColumns = ['name', 'studyProgram', 'semester','countHours','sessionCount','leftSessions','classType'];
       // this.dataSource.paginator = this.paginator;
@@ -63,6 +64,6 @@ export class StandardUsersComponent implements OnInit{
 
 
   onLogout(): void {
-    this.router.navigate(['/login']);
+    this.authService.logout();
   }
 }
