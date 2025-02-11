@@ -412,7 +412,7 @@ export class HomeComponent implements OnInit {
         });
       });
     } else if (type === 'distributions') {
-      console.log('Implementacija za distribucije će biti dodata kasnije.');
+      // console.log('Implementacija za distribucije će biti dodata kasnije.');
     }
 
     return content;
