@@ -1,12 +1,9 @@
 import {APP_INITIALIZER, enableProdMode, importProvidersFrom} from '@angular/core';
-import { bootstrapApplication } from '@angular/platform-browser';
-import { provideRouter } from '@angular/router';
-import { provideHttpClient } from '@angular/common/http';
-import { OAuthModule, OAuthService } from 'angular-oauth2-oidc';
-import { environment } from './environments/environment';
-import { AppComponent } from './app/app.component';
-import { routes } from './app/app.routes';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import {bootstrapApplication} from '@angular/platform-browser';
+import {OAuthModule, OAuthService} from 'angular-oauth2-oidc';
+import {environment} from './environments/environment';
+import {AppComponent} from './app/app.component';
+import appConfig from './app/app.config';
 
 export function initializeOAuth(oauthService: OAuthService) {
   return () => {
@@ -29,9 +26,7 @@ if (environment.production) {
 
 bootstrapApplication(AppComponent, {
   providers: [
-    provideRouter(routes),
-    provideHttpClient(),
-    provideAnimationsAsync(),
+    ...appConfig.providers,
     importProvidersFrom(OAuthModule.forRoot()),
     {
       provide: APP_INITIALIZER,
