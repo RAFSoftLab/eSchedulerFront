@@ -236,15 +236,15 @@ export class HomeComponent implements OnInit {
     switch (type) {
       case 'teachers':
         data = this.teachers;
-        fileName = 'teachers.json';
+        fileName = 'nastavnici.json';
         break;
       case 'subjects':
         data = this.subjects;
-        fileName = 'subjects.json';
+        fileName = 'predmeti.json';
         break;
       case 'distributions':
         data = this.distributions;
-        fileName = 'distributions.json';
+        fileName = 'raspodela.json';
         break;
     }
 
@@ -270,15 +270,15 @@ export class HomeComponent implements OnInit {
     switch (type) {
       case 'teachers':
         data = this.teacherSummary;
-        fileName = 'teachers.pdf';
+        fileName = 'nastavnici.pdf';
         break;
       case 'subjects':
         data = this.subjects;
-        fileName = 'subjects.pdf';
+        fileName = 'predmeti.pdf';
         break;
       case 'distributions':
         data = this.distributions;
-        fileName = 'distributions.pdf';
+        fileName = 'raspodela.pdf';
         break;
       default:
         console.warn(`Nepoznat tip podataka: ${type}`);

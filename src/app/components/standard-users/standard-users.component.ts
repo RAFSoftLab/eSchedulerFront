@@ -8,7 +8,7 @@ import {CommonModule} from '@angular/common';
 import {DistributionService} from '../../services/distribution/distribution.service';
 import {standardUser} from '../../models/standardUser.model';
 import {MatSortModule} from '@angular/material/sort';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {AuthService} from '../../services/auth.service';
 
 
@@ -47,7 +47,9 @@ export class StandardUsersComponent implements OnInit{
     classType: 'Vrsta',
   };
 
-  constructor(private router: Router,private distributionService: DistributionService,private authService: AuthService) {
+  constructor(private distributionService: DistributionService,
+              private authService: AuthService,
+              private route: ActivatedRoute) {
     this.dataSource = new MatTableDataSource<any>();
   }
 
@@ -94,26 +96,27 @@ export class StandardUsersComponent implements OnInit{
 
 
   ngOnInit(): void {
-    this.user = this.authService.getEmail();
+    this.route.queryParams.subscribe(params => {
+      const emailFromUrl = params['email'];
+      this.user = emailFromUrl || this.authService.getEmail();
 
-    this.distributionService.getStandardUser(this.user).subscribe((standardUsers) => {
-      this.standardUser = standardUsers.map(user => ({
-        ...user,
-        countHours: user.classType === 'vezbe' ? user.exerciseHours : user.lectureHours
-      }));
+      this.distributionService.getStandardUser(this.user).subscribe((standardUsers) => {
+        this.standardUser = standardUsers.map(user => ({
+          ...user,
+          countHours: user.classType === 'vezbe' ? user.exerciseHours : user.lectureHours
+        }));
+        this.dataSource.data = this.standardUser;
+        this.displayedColumns = ['name', 'studyProgram', 'semester', 'countHours', 'sessionCount', 'leftSessionCount', 'classType'];
 
-      // console.log('Podaci učitani:', this.standardUser);
+        if (this.standardUser.length > 0) {
+          this.calculateSummaryFromData();
+          const { firstName, lastName } = this.standardUser[0];
+          this.username = `${firstName} ${lastName}`;
+        } else {
+          this.username = 'Nepoznat korisnik';
+        }
+      });
 
-      this.dataSource.data = this.standardUser;
-      this.displayedColumns = ['name', 'studyProgram', 'semester', 'countHours', 'sessionCount', 'leftSessionCount', 'classType'];
-
-      if (this.standardUser.length > 0) {
-        this.calculateSummaryFromData();
-        const { firstName, lastName } = this.standardUser[0];
-        this.username = `${firstName} ${lastName}`;
-      } else {
-        this.username = 'Nepoznat korisnik';
-      }
     });
   }
 
