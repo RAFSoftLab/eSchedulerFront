@@ -1,0 +1,9 @@
+.navbar .dropdown-item {
+  cursor: pointer;
+}
+.navbar .dropdown-item:hover {
+  background-color: #f8f9fa;
+}
+.navbar .dropdown-toggle {
+  cursor: pointer;
+}

@@ -15,10 +15,36 @@
         <li class="nav-item">
           <a class="nav-link" routerLink="/distribution">Rapodela</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/standardUser">Nastavnik</a>
+<!--        <li class="nav-item">-->
+<!--          <a class="nav-link" routerLink="/standardUser">Nastavnik</a>-->
+<!--        </li>-->
+        <!-- Dugme za Export -->
+        <li class="nav-item dropdown">
+          <button class="nav-link btn btn-outline-primary dropdown-toggle" id="exportDropdown" data-bs-toggle="dropdown"
+                  aria-expanded="false">
+            Export
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="exportDropdown">
+            <li>
+              <a class="dropdown-item" (click)="exportData('teachers', 'json')">Export Nastavnici (JSON)</a>
+            </li>
+            <li>
+              <a class="dropdown-item" (click)="exportData('subjects', 'json')">Export Predmeti (JSON)</a>
+            </li>
+            <li>
+              <a class="dropdown-item" (click)="exportData('distributions', 'json')">Export Raspodela (JSON)</a>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <a class="dropdown-item" (click)="exportData('teachers', 'pdf')">Export Nastavnici (PDF)</a>
+            </li>
+            <li>
+              <a class="dropdown-item" (click)="exportData('subjects', 'pdf')">Export Predmeti (PDF)</a>
+            </li>
+          </ul>
         </li>
       </ul>
+      <!-- Dugme za logout -->
       <ul class="navbar-nav ms-auto">
         <li class="nav-item">
           <button class="nav-link btn btn-danger" (click)="onLogout()" style="font-weight: bold;">Logout</button>
