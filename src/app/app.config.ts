@@ -5,12 +5,12 @@ import {provideAnimationsAsync} from '@angular/platform-browser/animations/async
 import {routes} from './app.routes';
 import {routesNoAuth} from './app.routes.no-auth';
 
-const useAuth = false; // Ovde se menja između true (sa AuthGuard) i false (bez AuthGuard)
+const useAuth = false; // Postavka koja određuje da li se koristi AuthGuard (true) ili ne (false)
 
 const appConfig: ApplicationConfig = {
   providers: [
-    provideZoneChangeDetection({ eventCoalescing: true }), // Change detection
-    provideRouter(useAuth ? routes : routesNoAuth), // Configurations for the router
+    provideZoneChangeDetection({ eventCoalescing: true }),
+    provideRouter(useAuth ? routes : routesNoAuth),
     provideHttpClient(),
     provideAnimationsAsync(),
   ],

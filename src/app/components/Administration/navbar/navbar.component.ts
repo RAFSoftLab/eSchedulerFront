@@ -44,10 +44,20 @@ export class NavbarComponent implements OnInit{
         title: teachers.title,
         summaryExerciseHours: 0,
         summaryLectureHours: 0,
-      }));
+      }))
+        .sort((a, b) => {
+          const lastNameComparison = a.lastName.localeCompare(b.lastName);
+          return lastNameComparison !== 0 ? lastNameComparison : a.firstName.localeCompare(b.firstName);
+        });
     });
 
     this.subjectService.getSubjects().subscribe((subjects) => {
+      this.subjects = subjects.sort((a,b) =>{
+        if(a.semester !== b.semester){
+          return a.semester - b.semester;
+        }
+        return a.studyProgram.localeCompare(b.studyProgram);
+      });
       this.subjects = subjects;
     });
 
@@ -116,19 +126,23 @@ export class NavbarComponent implements OnInit{
   exportDataToPdf(type: 'teachers' | 'subjects' | 'distributions'): void {
     let data: any[];
     let fileName = '';
+    let naslov = '';
 
     switch (type) {
       case 'teachers':
         data = this.teacherSummary;
         fileName = 'nastavnici.pdf';
+        naslov = 'Izveštaj - Profesori';
         break;
       case 'subjects':
         data = this.subjects;
         fileName = 'predmeti.pdf';
+        naslov = 'Izveštaj - Predmeti';
         break;
       case 'distributions':
         data = this.distributions;
         fileName = 'raspodela.pdf';
+        naslov = 'Izveštaj - Raspodela';
         break;
       default:
         console.warn(`Nepoznat tip podataka: ${type}`);
@@ -142,24 +156,24 @@ export class NavbarComponent implements OnInit{
 
     const docDefinition = {
       content: [
-        {text: `Izveštaj - ${type.charAt(0).toUpperCase() + type.slice(1)}`, style: 'header'},
+        {text: naslov, style: 'header'},
         ...this.generateContentForPdf(type, data)
       ],
       styles: {
         header: {
-          fontSize: 18,
+          fontSize: 8,
           bold: true,
           alignment: 'center' as const,
-          margin: [0, 0, 0, 10] as [number, number, number, number]
+          margin: [0, 0, 0, 2] as [number, number, number, number]
         },
         subheader: {
-          fontSize: 14,
+          fontSize: 8,
           bold: true,
-          margin: [0, 10, 0, 5] as [number, number, number, number]
+          margin: [0, 2, 0, 2] as [number, number, number, number]
         },
         tableHeader: {
           bold: true,
-          fontSize: 12,
+          fontSize: 6,
           color: 'white',
           fillColor: '#2980b9',
           alignment: 'center' as const,
@@ -168,7 +182,7 @@ export class NavbarComponent implements OnInit{
       },
       defaultStyle: {
         font: 'Roboto',
-        fontSize: 10
+        fontSize: 6
       },
       fonts: {
         Roboto: {
@@ -193,11 +207,13 @@ export class NavbarComponent implements OnInit{
         content.push(
           {
             text: `${teacherSummary.lastName} ${teacherSummary.firstName} - ${teacher?.title || 'N/A'}`,
-            style: 'subheader'
+            style: 'subheader',
+            margin:[0,2,0,2]
           },
           {
             text: `Fond časova: ${teacherSummary.summaryLectureHours + teacherSummary.summaryExerciseHours}`,
-            margin: [0, 0, 0, 10]
+            alignment: 'right',
+            margin: [0, -10, 0, 2]
           }
         );
 
@@ -215,7 +231,7 @@ export class NavbarComponent implements OnInit{
         content.push({
           table: {
             headerRows: 1,
-            widths: ['*', '*', '*', '*', '*', '*', '*'],
+            widths: ['30%', '20%', '10%', '10%', '10%', '10%', '10%'],
             body: [
               [
                 {text: 'Naziv', style: 'tableHeader'},
@@ -223,22 +239,22 @@ export class NavbarComponent implements OnInit{
                 {text: 'Semestar', style: 'tableHeader'},
                 {text: 'Vrsta', style: 'tableHeader'},
                 {text: 'Fond', style: 'tableHeader'},
-                {text: 'Broj termina', style: 'tableHeader'},
+                {text: 'Termini', style: 'tableHeader'},
                 {text: 'Ukupno', style: 'tableHeader'}
               ],
               ...tableData
             ]
           },
-          margin: [0, 0, 0, 20]
+          margin: [0, 0, 0, 5]
         });
       });
     } else if (type === 'subjects') {
       data.forEach((subject: Subject) => {
         content.push(
-          {text: `${subject.name} - ${subject.studyProgram}, semestar: ${subject.semester}`, style: 'subheader'},
-          {text: `Termini predavanja: ${subject.lectureSessions}`, margin: [0, 0, 0, 5]},
-          {text: `Termini vežbi: ${subject.exerciseSessions}`, margin: [0, 0, 0, 10]}
-        );
+          {text: `${subject.name} - ${subject.studyProgram}, semestar: ${subject.semester}, Termini Predavanja: ${subject.lectureSessions}, Termini Vežbi: ${subject.exerciseSessions}`,
+            style: 'subheader',
+            margin:[0,0,0,5]
+          });
 
         const subjectDistributions = this.distributions.filter(dist => dist.subject.id === subject.id);
         const tableData = subjectDistributions.map(dist => [
@@ -252,10 +268,10 @@ export class NavbarComponent implements OnInit{
         content.push({
           table: {
             headerRows: 1,
-            widths: ['*', '*', '*', '*', '*'],
+            widths: ['30%', '15%', '20%', '20%', '15%'],
             body: [
               [
-                {text: 'Prezime i ime', style: 'tableHeader'},
+                {text: 'Nastavnik', style: 'tableHeader'},
                 {text: 'Vrsta', style: 'tableHeader'},
                 {text: 'Broj termina', style: 'tableHeader'},
                 {text: 'Broj časova', style: 'tableHeader'},
@@ -264,7 +280,7 @@ export class NavbarComponent implements OnInit{
               ...tableData
             ]
           },
-          margin: [0, 0, 0, 20]
+          margin: [0, 0, 0, 5]
         });
       });
     } else if (type === 'distributions') {

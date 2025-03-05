@@ -285,7 +285,7 @@ export class DistributionComponent implements OnInit, AfterViewInit{
         console.error('Došlo je do greške pri učitavanju distribucija:', error);
       }
     );
-    this.displayedColumns = ['name','email','studyProgram', 'mismatchType', 'mismatchCount','actions'];
+    this.displayedColumns = ['name','studyProgram', 'mismatchType', 'mismatchCount','actions'];
   }
 
   onSubjectChange(event: Subject): void {
