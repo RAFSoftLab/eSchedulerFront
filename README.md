@@ -64,9 +64,12 @@ git clone https://github.com/RAFSoftLab/eSchedulerFront.git eSchedulerFront
 1. **Create a MySQL database** named `raspodelanastave` using **phpMyAdmin** or the MySQL command line.
 2. **Update the database credentials** in the backend configuration file (`application.properties`):
     ```properties
+    spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver 
     spring.datasource.url=jdbc:mysql://localhost:2524/raspodelanastave
     spring.datasource.username=your_username
     spring.datasource.password=your_password
+    jwt.secret=your_secret
+    server.port=2525
     ```
 ---
 
