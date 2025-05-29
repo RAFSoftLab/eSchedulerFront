@@ -43,6 +43,13 @@
             </li>
           </ul>
         </li>
+        <!-- Dugme za Import -->
+        <li class="nav-item">
+          <label for="importFile" class="btn btn-outline-success nav-link" style="cursor: pointer;">
+            Import Raspodela
+          </label>
+          <input type="file" id="importFile" accept=".json" (change)="onFileSelected($event)" hidden>
+        </li>
       </ul>
       <!-- Dugme za logout -->
       <ul class="navbar-nav ms-auto">

@@ -289,4 +289,31 @@ export class NavbarComponent implements OnInit{
 
     return content;
   }
+
+
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+
+    if (!input.files || input.files.length === 0) return;
+
+    const file = input.files[0];
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      try {
+        const json = JSON.parse(reader.result as string);
+        this.distributionService.importDistributions(json).subscribe({
+          next: () => alert('Uspešno importovano!'),
+          error: err => {
+            console.error(err);
+            alert('Greška prilikom slanja na backend!');
+          }
+        });
+      } catch (e) {
+        alert('Greška prilikom čitanja JSON fajla!');
+      }
+    };
+
+    reader.readAsText(file);
+  }
 }
