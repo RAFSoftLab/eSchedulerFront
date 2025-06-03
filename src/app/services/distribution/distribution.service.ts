@@ -33,7 +33,10 @@ export class DistributionService {
   }
 
 
-  importDistributions(json: any): Observable<any> {
-    return this.httpClient.post(`${environment.apiUrl}/distributions/import`, json);
+  importDistributions(json: any): Observable<string> {
+    return this.httpClient.post(`${environment.apiUrl}/distributions/import`, json, {
+      responseType: 'text'
+    });
   }
+
 }

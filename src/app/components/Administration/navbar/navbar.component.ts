@@ -290,7 +290,6 @@ export class NavbarComponent implements OnInit{
     return content;
   }
 
-
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
 
@@ -303,8 +302,12 @@ export class NavbarComponent implements OnInit{
       try {
         const json = JSON.parse(reader.result as string);
         this.distributionService.importDistributions(json).subscribe({
-          next: () => alert('Uspešno importovano!'),
-          error: err => {
+          next: (_response) => {
+            // Ako je server odgovorio sa plain tekstom i statusom 201, ovo će se ovde obraditi
+            location.reload();
+          },
+          error: (err) => {
+            // Ako status NIJE 201, obradi grešku
             console.error(err);
             alert('Greška prilikom slanja na backend!');
           }
@@ -316,4 +319,7 @@ export class NavbarComponent implements OnInit{
 
     reader.readAsText(file);
   }
+
+
+
 }
