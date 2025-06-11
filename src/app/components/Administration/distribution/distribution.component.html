@@ -47,15 +47,9 @@
                 <div class="mb-3">
                   <label class="form-label">{{ columnNamesMap['subject'] }}</label>
                   <ng-container *ngIf="activeOption === 'first'; else subjectField">
-                    <ng-select
-                      class="custom-ng-select highlighted"
-                      [items]="subjects"
-                      bindLabel="name"
-                      formControlName="subject"
-                      [placeholder]="distributionForm.get('subject')?.value ? '' : 'Izaberite predmet'"
-                      (change)="onSubjectChange($event)">
-                      [searchable]="true">
-                    </ng-select>
+                    <div class="form-control" style="background-color: #e9ecef; pointer-events: none;">
+                      {{ distributionForm.get('subject')?.value || 'Nije izabran predmet' }}
+                    </div>
                   </ng-container>
                   <ng-template #subjectField>
                     <input type="text" class="form-control" [readonly]="true" formControlName="subject">
