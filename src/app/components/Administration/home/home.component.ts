@@ -172,9 +172,9 @@ export class HomeComponent implements OnInit {
       else {
         this.totalLectures += (row.countHours *13* row.sessionCount);
         if(row.semester % 2 == 0) {
-          this.weeklyLecturesE += row.countHours;
+          this.weeklyLecturesE += row.countHours * row.sessionCount;
         }else {
-          this.weeklyLecturesO += row.countHours;
+          this.weeklyLecturesO += row.countHours * row.sessionCount;
         }
       }
     });
