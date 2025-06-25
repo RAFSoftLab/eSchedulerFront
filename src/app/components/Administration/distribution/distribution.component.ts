@@ -156,8 +156,8 @@ export class DistributionComponent implements OnInit, AfterViewInit{
         const distribution = this.distributionForm.value;
         distribution.teacher = distribution.teacher.email;
         distribution.id =0;
-        console.log(distribution.teacher);
-        this.distributionService.saveDistribution(distribution).subscribe(
+
+        this.distributionService.saveDistribution(distribution,distribution.studyProgram,distribution.semester).subscribe(
           (savedDistribution) => {
             Modal.getInstance(document.getElementById('distributionModal')!)?.hide();
             this.snackBar.open('Uspešno ste uneli raspodelu!', 'Zatvori', {

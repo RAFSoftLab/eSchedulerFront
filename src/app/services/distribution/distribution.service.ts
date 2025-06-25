@@ -20,8 +20,9 @@ export class DistributionService {
     return this.httpClient.put<Distribution>(`${environment.apiUrl}/distributions`, distribution);
   }
 
-  saveDistribution(distribution: Distribution): Observable<Distribution>{
-    return this.httpClient.post<Distribution>(`${environment.apiUrl}/distributions`, distribution);
+  saveDistribution(distribution: Distribution,studyProgram:string, semester:string): Observable<Distribution>{
+    return this.httpClient.post<Distribution>( `${environment.apiUrl}/distributions?studyProgram=${studyProgram}&semester=${semester}`,
+      distribution);
   }
 
   deleteDistribution(id: number): Observable<any>{
