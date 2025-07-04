@@ -192,11 +192,15 @@ export class TeacherComponent implements OnInit,AfterViewInit{
     this.displayedColumns = ['firstName', 'lastName', 'title','email','actions'];
 
     this.teacherForm.get('firstName')?.valueChanges.subscribe(() => {
-      this.updateEmail();
+      if (this.createNewTeacher) {
+        this.updateEmail();
+      }
     });
 
     this.teacherForm.get('lastName')?.valueChanges.subscribe(() => {
-      this.updateEmail();
+      if (this.createNewTeacher) {
+        this.updateEmail();
+      }
     });
   }
 

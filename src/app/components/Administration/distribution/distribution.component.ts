@@ -42,7 +42,7 @@ export class DistributionComponent implements OnInit, AfterViewInit{
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   columnNamesMap: { [key: string]: string } = {
-    teacher: 'Profesor',
+    teacher: 'Nastavnik',
     subject: 'Predmet',
     studyProgram: 'Studijski program',
     semester: 'Semestar',
@@ -53,7 +53,7 @@ export class DistributionComponent implements OnInit, AfterViewInit{
     actions: 'Akcije',
     email: 'Email',
     //Secound Table
-    name:'ime',
+    name:'Naziv predmeta',
     mismatchType: 'vrsta',
     mismatchCount: 'preostalo Termina',
   };

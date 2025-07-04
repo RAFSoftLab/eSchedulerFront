@@ -57,7 +57,7 @@ export class HomeComponent implements OnInit {
     firstName: 'Ime',
     lastName: 'Prezime',
     title: 'Zvanje',
-    name: 'Naziv',
+    name: 'Naziv predmeta',
     studyProgram: 'Studijski program',
     semester: 'Semestar',
     countHours: 'Broj časova',
@@ -199,7 +199,7 @@ export class HomeComponent implements OnInit {
     // Mapping data
     this.dataSource.data = this.selectedDistributions.map((distribution) => {
       return {
-        teacher: distribution.teacher?.firstName + '' +distribution.teacher.lastName,
+        teacher: distribution.teacher?.firstName + '  ' +distribution.teacher.lastName,
         studyProgram: distribution.subject?.studyProgram,
         semester: distribution.subject?.semester,
         countHours: distribution.classType === 'vezbe'

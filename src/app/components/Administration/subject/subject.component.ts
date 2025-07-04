@@ -46,7 +46,7 @@ export class SubjectComponent implements OnInit,AfterViewInit{
 
 
   columnNamesMap: { [key: string]: string } = {
-    name: 'Ime',
+    name: 'Naziv predmeta',
     studyProgram: 'Studijski program',
     semester: 'Semestar',
     lectureHours: 'Broj časova predavanja',
