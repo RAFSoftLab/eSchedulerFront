@@ -164,9 +164,9 @@ export class HomeComponent implements OnInit {
       if(row.classType === "vezbe") {
         this.totalExercises += (row.countHours *13* row.sessionCount);
         if(row.semester % 2 == 0) {
-          this.weeklyExercisesE += row.countHours;
+          this.weeklyExercisesE += row.countHours*row.sessionCount;
         }else {
-          this.weeklyExercisesO += row.countHours;
+          this.weeklyExercisesO += row.countHours*row.sessionCount;
         }
       }
       else {
